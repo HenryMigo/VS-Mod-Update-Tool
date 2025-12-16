@@ -473,18 +473,32 @@ namespace VSModUpdater
 
                         if (releases != null && releases.Count > 0)
                         {
-                            foreach (var release in releases)
+                            // Order releases by mod version
+                            var orderedReleases = releases
+                                .Select(r =>
+                                {
+                                    var raw = r["modversion"]?.ToString()?.TrimStart('v').Trim();
+                                    return new
+                                    {
+                                        Release = r,
+                                        Version = NuGetVersion.TryParse(raw, out var v) ? v : null
+                                    };
+                                })
+                                .Where(x => x.Version != null)
+                                .OrderByDescending(x => x.Version);
+
+                            foreach (var item in orderedReleases)
                             {
+                                var release = item.Release;
+                                var parsedVersion = item.Version!;
+
                                 var tags = release["tags"]?.Select(t => t.ToString()) ?? Enumerable.Empty<string>();
                                 bool versionMatches = tags.Any(t =>
                                     t.Equals(selectedVersion, StringComparison.OrdinalIgnoreCase) ||
                                     t.StartsWith(selectedVersionPrefix, StringComparison.OrdinalIgnoreCase));
 
-                                if (!versionMatches) continue;
-
-                                string? releaseVersion = release["modversion"]?.ToString()?.TrimStart('v').Trim();
-                                if (string.IsNullOrEmpty(releaseVersion)) continue;
-                                if (!NuGetVersion.TryParse(releaseVersion, out var parsedVersion)) continue;
+                                if (!versionMatches)
+                                    continue;
 
                                 bool isPreRelease = parsedVersion.IsPrerelease;
 
@@ -492,7 +506,7 @@ namespace VSModUpdater
                                 {
                                     chosenVersion = parsedVersion.ToNormalizedString();
                                     chosenDownloadUrl = release["mainfile"]?.ToString();
-                                    break; // first stable version
+                                    break; // newest stable version
                                 }
 
                                 if (chosenVersion == null)
@@ -521,7 +535,8 @@ namespace VSModUpdater
                         }
 
                         // Mark mod for update only if newer version exists
-                        if (!string.IsNullOrWhiteSpace(mod.LatestVersion) && IsVersionGreater(mod.LatestVersion, mod.Version))
+                        if (!string.IsNullOrWhiteSpace(mod.LatestVersion) &&
+                            IsVersionGreater(mod.LatestVersion, mod.Version))
                         {
                             lock (modsNeedingUpdate)
                                 modsNeedingUpdate.Add(mod);
@@ -569,9 +584,11 @@ namespace VSModUpdater
         {
             try
             {
-                var savedLinks = File.Exists(modlinksPath)
-                    ? JsonConvert.DeserializeObject<Dictionary<string, ModLinkInfo>>(File.ReadAllText(modlinksPath))
-                    : new Dictionary<string, ModLinkInfo>();
+                var savedLinks =
+                    (File.Exists(modlinksPath)
+                        ? JsonConvert.DeserializeObject<Dictionary<string, ModLinkInfo>>(File.ReadAllText(modlinksPath))
+                        : null)
+                    ?? new Dictionary<string, ModLinkInfo>();
 
                 if (!savedLinks.ContainsKey(modId))
                     savedLinks[modId] = new ModLinkInfo();

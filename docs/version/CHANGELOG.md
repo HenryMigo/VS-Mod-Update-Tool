@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v0.6.1]
+
+### Changed
+- Added 1.21.6 as an option for version selection.
+
+### Fixed
+- An odd issue with some mods selecting the wrong version for updating -- the mod in question was Terra Prety, but I'm sure the issue went unnoticed with other mods as well.
+
 ## [v0.6.0]
 
 ### Added

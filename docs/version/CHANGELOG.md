@@ -1,18 +1,19 @@
-# v0.6.4
+## Version: 0.6.4
+## Date: 5-15-2026
 
 ### Changed
 - Added 1.22.1 and 1.22.2 as options for version selection.
 
 ---
 
-# v0.6.3
+## [v0.6.3] - 4-19-2026
 
 ### Changed
 - Added 1.21.7 as an option for version selection.
 
 ---
 
-# v0.6.2
+## [v0.6.2] - 4-11-2026
 
 ### Changed
 - Added 1.22.x and 1.22.0 as an option for version selection.
@@ -20,7 +21,7 @@
 
 ---
 
-# v0.6.1
+## [v0.6.1] - 12-16-2025
 
 ### Changed
 - Added 1.21.6 as an option for version selection.
@@ -30,7 +31,7 @@
 
 ---
 
-# v0.6.0
+## [v0.6.0] - 10-19-2025
 
 ### Added
 - Added an Ignore column and matching logic to ignore checking for updates on specific mods in the event a new version of a mod causes issues, but an older version works fine.
@@ -43,7 +44,7 @@
 
 ---
 
-# v0.5.2
+## [v0.5.2] - 10-7-2025
 
 ### Added
 - Added support for specific game versions ranging from 1.20.0 to 1.21.4.
@@ -53,7 +54,7 @@
 
 ---
 
-# v0.5.1
+## [v0.5.1] - 9-21-2025
 
 ### Added
 - Integrated NuGet.Versioning to improve semantic version sorting.
@@ -63,7 +64,7 @@
 
 ---
 
-# v0.5.0
+## [v0.5.0] - 9-21-2025
 
 ### Added
 - Added a button to copy the entire mod list (useful for quickly sharing in places like a Discord server).
@@ -74,7 +75,7 @@
 
 ---
 
-# v0.4.0
+## [v0.4.0] - 09-18-2025
 
 ### Added
 - MahApps.Metro.IconPacks.SimpleIcons for better brand icons.  
@@ -106,7 +107,7 @@
 
 ---
 
-# v0.3.0
+## [v0.3.0] - 09-17-2025
 
 ### Added
 - Game version selection dropdown for finding the most recent mod updates by [major.minor](https://semver.org) version (e.g. `1.21.x`).  
@@ -126,7 +127,7 @@
 
 ---
 
-# v0.2.2
+## [v0.2.2] - 09-16-2025
 
 ### Added
 - Confirmation prompt before downloading all mods.
@@ -136,7 +137,7 @@
 
 ---
 
-# v0.2.1
+## [v0.2.1] - 09-16-2025
 
 ### Added
 - New dialog type.
@@ -147,7 +148,7 @@
 
 ---
 
-# v0.2.0.0
+## [v0.2.0.0] - 09-16-2025
 
 ### Added
 - Buttons and logic for refreshing the mods folder, browsing for a different mods folder, and joining the Discord server for our Vintage Story server.  
@@ -167,7 +168,7 @@
 
 ---
 
-# v0.1.0
+## [v0.1.0] - 09-14-2025
 
 ### Added
 - Moved the mods folder textbox to the title bar.
@@ -191,10 +192,11 @@
 
 ---
 
-# v0.0.3
+## [v0.0.3] - 09-14-2025
 
 ### Added
 - Added game version dropdown selection.
+
 - Added a check for mod updates button.
 
 ### Changed
@@ -202,19 +204,20 @@
 
 ---
 
-# v0.0.2
+## [v0.0.2] - 09-14-2025
 
 ### Added
 - Added logic for handling inconsistent json field naming. (e.g. X mod uses "Name" while Y mod uses "name")
+
 - Added versioning to the project file.
 
 ### Changed
 - Switched from System.Text.Json to Newtonsoft.Json.Linq, this was mainly due to some mod authors leaving a trailing comma at the end of their modinfo.json causing the system.text JSON parser to fail.
+
 - Increased default app window size
 
 ---
 
-# v0.0.1
-
+## [v0.0.1] - 09-13-2025
 ### Added
 - Initial commit of the project, barebones at this point.

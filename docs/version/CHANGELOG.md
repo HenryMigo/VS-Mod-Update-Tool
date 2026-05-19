@@ -1,5 +1,20 @@
-## Version: 0.6.4
-## Date: 5-15-2026
+## [v0.7.0] - TBD
+
+### Added
+- New features or functionality added.
+
+### Changed
+- Changes to existing functionality.
+
+### Fixed
+- Bugs that have been fixed.
+
+### Removed
+- Deprecated or removed features.
+
+---
+
+## [0.6.4] - 5-15-2026
 
 ### Changed
 - Added 1.22.1 and 1.22.2 as options for version selection.
@@ -110,7 +125,7 @@
 ## [v0.3.0] - 09-17-2025
 
 ### Added
-- Game version selection dropdown for finding the most recent mod updates by [major.minor](https://semver.org) version (e.g. `1.21.x`).  
+- Game version selection dropdown for finding the most recent mod updates by [major.minor](https://semver.org) version (e.g. 1.21.x).  
   - Patch version no longer matters, as long as the update matches the selected [major.minor](https://semver.org) version.  
 
 ### Changed
@@ -156,7 +171,7 @@
 - Progress bars and completion dialogs for checking for updates and updating mods.  
 - Logic to track how many mods were checked and which mods have updates available.  
 - Extended error logging to display informative messages for additional actions that may cause errors.  
-- A summary screen after updating mods showing which mods were updated (by `modId`) and their version changes, with a button for copying the text to share the results.  
+- A summary screen after updating mods showing which mods were updated (by modId) and their version changes, with a button for copying the text to share the results.  
 - Logic for updating a single mod independently of the full update process.
 
 ### Changed
@@ -164,7 +179,7 @@
 - Code has been refactored and cleaned for maintainability.
 
 ### Fixed
-- Corrected links required by the app, including the `update.json` file in the repository and the repository page itself.
+- Corrected links required by the app, including the update.json file in the repository and the repository page itself.
 
 ---
 
@@ -183,7 +198,7 @@
 
 ### Changed
 - Mods table layout updated with a "Latest Version" column.
-- Config file location changed to `Documents\AriesLR\VSModUpdateTool`.
+- Config file location changed to: Documents\AriesLR\VSModUpdateTool.
 - modinfo.json parsing updated to handle both uppercase and lowercase field names.
 - Empty fields in the Mods table now display as "N/A".
 

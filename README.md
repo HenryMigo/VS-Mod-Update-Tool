@@ -1,6 +1,25 @@
-# VS Mod Update Tool (WIP Name)
+<p align="center">
+  <h1 align="center">VSSuite</h1>
+  
+  <a href="https://github.com/AriesLR/VSSuite/releases">
+    <img src="https://img.shields.io/github/v/release/AriesLR/VSSuite?color=emerald" alt="GitHub Release">
+  </a>
+  <a href="docs/version/CHANGELOG.md">
+    <img src="https://img.shields.io/badge/changelog-latest-blue" alt="Changelog">
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/AriesLR/VSSuite?color=orange" alt="License">
+  </a>
+  
+  <br><br>
 
-[![Changelog](https://img.shields.io/badge/changelog-latest-blue)](docs/version/CHANGELOG.md)
+  <a href="https://www.patreon.com/c/arieslr/membership">
+    <img src="https://img.shields.io/badge/Patreon-F96854?style=flat&logo=patreon&logoColor=white" alt="Patreon">
+  </a>
+  <a href="https://www.buymeacoffee.com/arieslr">
+    <img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee">
+  </a>
+</p>
 
 ## Table of Contents
 
@@ -31,35 +50,66 @@ If the user selects **"Download All Mods,"** the app fetches the updated mods, r
 ### Software
 
 - [.NET 8.0 Runtime](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-  - This is probably already installed on your system.
+  - This is likely already installed on your system.
+
+- [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH#download)
+  - If this is missing from your system, the application will automatically prompt you to download it when opening the mod browser.
 
 ### OS Support
 
 - Windows 10/11
-  - Older versions of windows may still work.
+  - Older versions of windows will likely still work.
 
 
 ## Features
-- **Automatic Mod Scanning:** Reads every mod in your selected folder and extracts key details from each `modinfo.json`.  
-- **Update Checking:** Uses the Vintage Story Mods API to fetch the latest versions and game compatibility data, comparing them against your installed mods.  
-- **Version Tracking:** Highlights which mods have updates available directly in the main table.  
-- **Batch Updates:** Update and replace all outdated mods at once with the latest versions.  
-- **Individual Mod Updates:** Update a single mod independently, even if multiple mods have updates available.  
-- **Detailed Update Summary:** Displays a clear summary of all updated mods along with their version changes.  
-- **User-Friendly Interface:** Shows your mods in a clean, sortable table, making it easy to spot which ones need updating.  
+- **Automatic Mod Scanning:** Reads every mod in your selected folder and extracts key details from each `modinfo.json`.
 
+- **Update Checking:** Uses the Vintage Story Mods API to fetch the latest versions and game compatibility data, comparing them against your installed mods.
+  - Checks compatibility against a user selected target game version via a dropdown menu.
+  - Highlights available updates instantly in the main data table.
+
+- **Version Tracking:** Highlights which mods have updates available in the main table.
+
+- **Batch Updates:** Update and replace all outdated mods at once with the latest versions.
+
+- **Individual Mod Updates:** Update a single mod independently, even if multiple mods have updates available.
+
+- **Embedded Mod Browser:** Browse the official Vintage Story Mod Database natively inside the application, allowing you to discover new mods without switching to an external browser.
+
+- **Mod Search Filter:** Filter your active mod list by name using a responsive search bar built into the application's title bar.
+
+- **User-Friendly Interface:** Shows your mods in a clean, sortable table, making it easy to spot which ones need updating.
+  - **Dynamic Status Pills:** Features status badges above the table showing counters for total mods, disabled updates, version mismatches, and pending updates.
+  - Provides buttons to open any mod's official Vintage Story Mod Database page instantly.
+
+- **Detailed Update Summary:** Displays a clear summary of all updated mods along with their version changes.
+  - Includes a copy to clipboard option formatted perfectly in Discord markdown, making it effortless to post patch notes for your community.
+
+- **Advanced Modlist Tools:** Access a collection of utility tools designed to manage your modlist:
+  - **Duplicate Cleaner:** Automatically scans your active folder and removes duplicate mod files.
+  - **Flexible Modlist Exporting:** Copy your current modlist to the clipboard using either a standard layout or a pre-formatted Discord markdown style.
+  - **Modlist Purge & Reinstall:** Wipe and reinstall your entire active modlist to potentially fix corruption issues.
+
+- **In-App Changelog Viewer:** Read the application's full development and update history directly inside the client.
+
+- **Built-In Information Panel:** Access a context guide that clarifies potentially confusing behaviors.
+
+- **Deep Customization:** Tailor VSSuite to your liking with a application settings menu.
+  - **General Preferences:** Set your preferred target game version for startup loading and toggle automatic update checks on application launch.
+  - **Safe Mode Filter:** Restricts VSSuite to stable mod releases only, automatically filtering out development and release candidate builds (e.g., `3.2.1-dev.1` or `1.2.3-rc.3`).
+  - **Interface Customization:** Toggle specific table columns on or off (such as Ignore, Mod Page, File Name, or Game Version) to hide unnecessary data fields and declutter your view.
 
 ## Known Issues
 
-- None at the moment, I need more people using the app to know for sure.
+- None at all! Let's keep it that way.
 
 ## Installation
 
-Getting started with **VS-Mod-Update-Tool** is simple — just download the [Latest Release](https://github.com/AriesLR/VS-Mod-Update-Tool/releases/latest) and run the `VS-Mod-Update-Tool.exe`. No installation or extraction required, the app is fully portable and can be run from anywhere on your computer.
+Getting started with **VSSuite** is simple, just download the [Latest Release](https://github.com/AriesLR/VSSuite/releases/latest) and run the `VSSuite.exe`. No installation or extraction required, the app is fully portable and can be run from anywhere on your computer.
 
 ### How To Use
 
-1. Launch `VS-Mod-Update-Tool.exe`.
+1. Launch `VSSuite.exe`.
 
 2. Browse for your **Mods** folder when prompted.
 
@@ -72,13 +122,7 @@ Getting started with **VS-Mod-Update-Tool** is simple — just download the [Lat
 
 ## Updating
 
-Updating **VS-Mod-Update-Tool** is easy. Since the app is fully portable, all you need to do is download the [Latest Release](https://github.com/AriesLR/VS-Mod-Update-Tool/releases/latest) and replace your existing `VS-Mod-Update-Tool.exe` with the new one.
-
-
-## Infographic
-![VS Mod Update Tool Info](https://raw.githubusercontent.com/AriesLR/VS-Mod-Update-Tool/refs/heads/main/docs/img/VS-Mod-Update-Tool-Info.png)
-
-The infographic might not be 100% up to date as it takes a ton of effort to update any time I change a small thing with the UI. I will update it on larger changes otherwise it still should be mostly correct.
+Updating **VSSuite** is easy. Since the app is fully portable, all you need to do is download the [Latest Release](https://github.com/AriesLR/VSSuite/releases/latest) and replace your existing `VSSuite.exe` with the new one.
 
  
 ## Acknowledgements
@@ -91,5 +135,9 @@ The infographic might not be 100% up to date as it takes a ton of effort to upda
 
 ## Tips
 [Buy Me a Coffee](https://www.buymeacoffee.com/arieslr)
+
+[Patreon](https://www.patreon.com/c/arieslr/membership)
+
+---
 
 <img src="https://i.imgflip.com/1u2oyu.jpg" alt="I like this doge" width="100">

@@ -1,4 +1,4 @@
-﻿namespace VSModUpdater.Resources.Functions.Services
+﻿namespace VSSuite.Resources.Functions.Services
 {
     public static class UrlService
     {

@@ -2,4 +2,4 @@ src/bin/
 src/obj/
 src/.vs/
 src/Properties/
-src/VSModUpdater.csproj.user
+src/VSSuite.csproj.user

@@ -1,18 +1,23 @@
-﻿<mah:MetroWindow x:Class="VSModUpdater.MainWindow"
+﻿<mah:MetroWindow x:Class="VSSuite.MainWindow"
                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:mah="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                  xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-                 xmlns:converters="clr-namespace:VSModUpdater.Resources.Functions.Converters"
-                 Title="VS Mod Update Tool"
-                 MinHeight="800"
-                 MinWidth="1175"
-                 Height="800"
-                 Width="1175"
+                 xmlns:converters="clr-namespace:VSSuite.Resources.Functions.Converters"
+                 xmlns:viewmodels="clr-namespace:VSSuite.Resources.ViewModels"
+                 xmlns:md="clr-namespace:MdXaml;assembly=MdXaml"
+                 xmlns:local="clr-namespace:VSSuite"
+                 d:DataContext="{d:DesignInstance Type=viewmodels:MainWindowViewModel}"
+                 Title="{Binding AppVersion, RelativeSource={RelativeSource Self}, StringFormat='VSSuite {0}'}"
+                 MinHeight="880"
+                 MinWidth="1293"
+                 Height="880"
+                 Width="1293"
                  FontFamily="Segoe UI"
                  GlowBrush="{DynamicResource MahApps.Brushes.Accent}"
+                 NonActiveGlowBrush="{DynamicResource MahApps.Brushes.Accent}"
                  WindowStyle="SingleBorderWindow"
                  ResizeMode="CanResizeWithGrip"
                  mc:Ignorable="d">
@@ -20,6 +25,10 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
         <converters:StringNotNullOrEmptyToVisibilityConverter x:Key="StringToVisibility" />
+        <converters:VersionToColorConverter x:Key="VersionToColorConverter" />
+
+        <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+        <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
     </Window.Resources>
 
     <mah:MetroWindow.LeftWindowCommands>
@@ -32,126 +41,90 @@
 
     <mah:MetroWindow.RightWindowCommands>
         <mah:WindowCommands>
-            <!-- Game Version Dropdown -->
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0" Margin="0 0 5 0">
-                <ComboBox x:Name="GameVersionDropdown"
-                          Width="150"
-                          Height="25"
-                          Foreground="{DynamicResource MahApps.Brushes.Gray6}"
-                          VerticalAlignment="Center"
-                          SelectedIndex="0">
 
-                    <ComboBox.Resources>
-                        <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.MouseOver" Color="{StaticResource MahApps.Colors.Gray.SemiTransparent}" />
-                        <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border" Color="{StaticResource MahApps.Colors.Gray.SemiTransparent}" />
-                        <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.Focus" Color="{StaticResource MahApps.Colors.Gray.SemiTransparent}" />
+            <!-- Mod Searchbar -->
+            <Border Background="{DynamicResource PrimaryAccent.Brush.W500}"
+                    BorderBrush="{DynamicResource MahApps.Brushes.Accent3}"
+                    BorderThickness="1"
+                    CornerRadius="2"
+                    Height="22"
+                    Width="300"
+                    Margin="10,0,10,0"
+                    VerticalAlignment="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                        <SolidColorBrush x:Key="MahApps.Brushes.Gray1" Color="{StaticResource MahApps.Colors.Gray6}" />
-                        <SolidColorBrush x:Key="MahApps.Brushes.Gray5" Color="{StaticResource MahApps.Colors.Gray.SemiTransparent}" />
-                    </ComboBox.Resources>
+                    <iconPacks:PackIconMaterial Kind="Magnify"
+                                                Width="12"
+                                                Height="12"
+                                                Grid.Column="0"
+                                                Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                VerticalAlignment="Center"
+                                                Margin="8,0,0,0" />
 
-                    <ComboBox.Style>
-                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-                            <Setter Property="Background" Value="Transparent" />
-                            <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
-                            <Setter Property="BorderThickness" Value="1" />
-                            <Setter Property="OverridesDefaultStyle" Value="True" />
+                    <TextBox x:Name="ModSearchTextBox"
+                             Grid.Column="1"
+                             VerticalAlignment="Center"
+                             TextAlignment="Left"
+                             Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             Margin="5,0,2,0"
+                             TextChanged="Searchbar_TextChanged">
+                        <TextBox.Style>
+                            <Style TargetType="TextBox">
+                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="TextBox">
+                                            <Grid>
+                                                <TextBlock x:Name="WatermarkPlaceholder"
+                                                           Text="Search mods..."
+                                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA400.O80}"
+                                                           FontSize="11"
+                                                           Visibility="Collapsed"
+                                                           IsHitTestVisible="False"
+                                                           VerticalAlignment="Center"
+                                                           Margin="2,0,0,0" />
 
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </ComboBox.Style>
+                                                <ScrollViewer x:Name="PART_ContentHost" VerticalAlignment="Center" />
+                                            </Grid>
 
-                    <ComboBoxItem Content="1.22.0" />
+                                            <ControlTemplate.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Text, RelativeSource={RelativeSource Self}}" Value="" />
+                                                        <Condition Binding="{Binding IsKeyboardFocusWithin, RelativeSource={RelativeSource Self}}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter TargetName="WatermarkPlaceholder" Property="Visibility" Value="Visible" />
+                                                </MultiDataTrigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
 
-                    <ComboBoxItem Content="1.22.x" />
+                    <Button Grid.Column="2"
+                            Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                            Padding="2"
+                            Height="18"
+                            Width="18"
+                            Margin="0,0,4,0"
+                            VerticalAlignment="Center"
+                            Click="ClearSearch_Click">
+                        <iconPacks:PackIconMaterial Width="10" Height="10" Kind="Close" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" />
+                    </Button>
+                </Grid>
+            </Border>
 
-                    <ComboBoxItem Content="1.21.7" />
-                    <ComboBoxItem Content="1.21.6" />
-                    <ComboBoxItem Content="1.21.5" />
-                    <ComboBoxItem Content="1.21.4" />
-                    <ComboBoxItem Content="1.21.3" />
-                    <ComboBoxItem Content="1.21.2" />
-                    <ComboBoxItem Content="1.21.1" />
-                    <ComboBoxItem Content="1.21.0" />
-
-                    <ComboBoxItem Content="1.21.x" />
-
-                    <ComboBoxItem Content="1.20.12" />
-                    <ComboBoxItem Content="1.20.11" />
-                    <ComboBoxItem Content="1.20.10" />
-                    <ComboBoxItem Content="1.20.9" />
-                    <ComboBoxItem Content="1.20.8" />
-                    <ComboBoxItem Content="1.20.7" />
-                    <ComboBoxItem Content="1.20.6" />
-                    <ComboBoxItem Content="1.20.5" />
-                    <ComboBoxItem Content="1.20.4" />
-                    <ComboBoxItem Content="1.20.3" />
-                    <ComboBoxItem Content="1.20.2" />
-                    <ComboBoxItem Content="1.20.1" />
-                    <ComboBoxItem Content="1.20.0" />
-
-                    <ComboBoxItem Content="1.20.x" />
-
-                    <ComboBoxItem Content="1.19.x" />
-                    <ComboBoxItem Content="1.18.x" />
-                    <ComboBoxItem Content="1.17.x" />
-                    <ComboBoxItem Content="1.16.x" />
-                    <ComboBoxItem Content="1.15.x" />
-                    <ComboBoxItem Content="1.14.x" />
-                    <ComboBoxItem Content="1.13.x" />
-                    <ComboBoxItem Content="1.12.x" />
-                    <ComboBoxItem Content="1.11.x" />
-                    <ComboBoxItem Content="1.10.x" />
-                    <ComboBoxItem Content="1.9.x" />
-                    <ComboBoxItem Content="1.8.x" />
-                    <ComboBoxItem Content="1.7.x" />
-                    <ComboBoxItem Content="1.6.x" />
-                    <ComboBoxItem Content="1.5.x" />
-                    <ComboBoxItem Content="1.4.x" />
-                </ComboBox>
-            </StackPanel>
-
-            <Button Click="RefreshMods_Click">
-                <iconPacks:PackIconMaterial Width="22" Height="22" Kind="FolderRefresh">
-                    <iconPacks:PackIconMaterial.ToolTip>
-                        <TextBlock>
-                            <Run Text="Refresh mods folder" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
-                            <LineBreak />
-                            <Run Text="Refresh the current mods folder to check for any new or removed files." />
-                        </TextBlock>
-                    </iconPacks:PackIconMaterial.ToolTip>
-                </iconPacks:PackIconMaterial>
-            </Button>
-
-            <Button Click="BrowseFolder_Click">
-                <iconPacks:PackIconMaterial Width="22" Height="22" Kind="FolderOpen">
-                    <iconPacks:PackIconMaterial.ToolTip>
-                        <TextBlock>
-                            <Run Text="Browse for a mods folder" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
-                            <LineBreak />
-                            <Run Text="Open the folder browser dialog to select a new mods folder." />
-                        </TextBlock>
-                    </iconPacks:PackIconMaterial.ToolTip>
-                </iconPacks:PackIconMaterial>
-            </Button>
-
-            <Button Click="CopyModlist_Click">
-                <iconPacks:PackIconMaterial Width="22" Height="22" Kind="ClipboardText">
-                    <iconPacks:PackIconMaterial.ToolTip>
-                        <TextBlock>
-                            <Run Text="Copy modlist" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
-                            <LineBreak />
-                            <Run Text="Copy the modlist to clipboard with markdown formatting." />
-                        </TextBlock>
-                    </iconPacks:PackIconMaterial.ToolTip>
-                </iconPacks:PackIconMaterial>
-            </Button>
-
-            <Button Click="OpenBuyMeACoffee_Click">
+            <!-- Title Bar Buttons / Leaving this here so I don't have to remake it if I use it again -->
+            <!--<Button Click="OpenBuyMeACoffee_Click">
                 <iconPacks:PackIconSimpleIcons Width="22" Height="22" Kind="Buymeacoffee">
                     <iconPacks:PackIconSimpleIcons.ToolTip>
                         <TextBlock>
@@ -161,178 +134,1677 @@
                         </TextBlock>
                     </iconPacks:PackIconSimpleIcons.ToolTip>
                 </iconPacks:PackIconSimpleIcons>
-            </Button>
-
-            <Button Click="CheckForUpdates_Click">
-                <iconPacks:PackIconMaterial Width="22" Height="22" Kind="Update">
-                    <iconPacks:PackIconMaterial.ToolTip>
-                        <TextBlock>
-                            <Run Text="Check For Updates" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
-                            <LineBreak />
-                            <Run Text="Check if there are any updates available." />
-                        </TextBlock>
-                    </iconPacks:PackIconMaterial.ToolTip>
-                </iconPacks:PackIconMaterial>
-            </Button>
+            </Button>-->
         </mah:WindowCommands>
     </mah:MetroWindow.RightWindowCommands>
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <mah:SplitView x:Name="SplitView" DisplayMode="CompactOverlay" IsPaneOpen="False" CompactPaneLength="50" OpenPaneLength="250" PaneBackground="Transparent">
+            <mah:SplitView.Pane>
+                <!-- Sidebar Navigation -->
+                <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent3}" BorderThickness="0 0 1 0">
+                    <mah:HamburgerMenu Grid.Column="0" HorizontalAlignment="Left" VerticalAlignment="Stretch"
+                                       IsPaneOpen="{Binding IsPaneOpen, ElementName=SplitView, Mode=TwoWay}" CompactPaneLength="50" OpenPaneLength="250"
+                                       PaneBackground="{StaticResource SecondaryAccent.Brush.W500}" Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                       HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                       Background="Transparent" Width="250"
 
-        <!-- Top Section -->
-        <Grid Grid.Row="0">
-            <!-- Mods Table -->
-            <DataGrid x:Name="ModsDataGrid"
-                      Grid.Row="1"
-                      AutoGenerateColumns="False"
-                      IsReadOnly="False"
-                      CanUserAddRows="False"
-                      Margin="0,0,0,10"
-                      RowHeight="40"
-                      ColumnHeaderHeight="35"
-                      VerticalAlignment="Stretch"
-                      HorizontalAlignment="Stretch"
-                      ColumnHeaderStyle="{DynamicResource CenteredMetroColumnHeader}">
+                                       ItemTemplate="{DynamicResource MenuTemplate}"
+                                       ItemContainerStyle="{DynamicResource ItemStyle}"
+                                       ItemsSource="{Binding MenuItems}"
 
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="Background" Value="Transparent" />
-                        <Setter Property="BorderBrush" Value="Transparent" />
-                        <Setter Property="BorderThickness" Value="0" />
-                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="DataGridRow">
-                                    <DataGridCellsPresenter />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.RowStyle>
+                                       OptionsItemTemplate="{DynamicResource MenuTemplate}"
+                                       OptionsItemContainerStyle="{DynamicResource ItemStyle}"
+                                       OptionsItemsSource="{Binding OptionsMenuItems}">
 
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="Ignore" Width="100">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <CheckBox IsChecked="{Binding DisableUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" HorizontalAlignment="Center">
-                                    <CheckBox.Resources>
-                                        <SolidColorBrush x:Key="MahApps.Brushes.Highlight" Color="#800300" />
-                                    </CheckBox.Resources>
-                                </CheckBox>
+                        <mah:HamburgerMenu.Resources>
+                            <SolidColorBrush x:Key="MahApps.HamburgerMenu.Pane.Foreground" Color="{DynamicResource SecondaryAccent.Colors.WA400}" />
+
+                            <DataTemplate x:Key="MenuTemplate">
+                                <Button Command="{Binding Command}"
+                                        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
+                                        Background="Transparent" BorderThickness="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{TemplateBinding Background}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+
+                                                <iconPacks:PackIconMaterial Width="25" Height="25"
+                                                                            Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                                                            Kind="{Binding Icon}"
+                                                                            VerticalAlignment="Center" HorizontalAlignment="Center"
+                                                                            Margin="12,10,10,10" Grid.Column="0">
+                                                    <iconPacks:PackIconMaterial.ToolTip>
+                                                        <TextBlock><Run Text="{Binding Text}" /></TextBlock>
+                                                    </iconPacks:PackIconMaterial.ToolTip>
+                                                </iconPacks:PackIconMaterial>
+
+                                                <TextBlock Text="{Binding Text}"
+                                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                                           FontSize="16" FontWeight="Bold"
+                                                           VerticalAlignment="Center" HorizontalAlignment="Left"
+                                                           Margin="5,10,10,10" Grid.Column="1" />
+                                            </Grid>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
                             </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
 
-                    <DataGridTemplateColumn Header="Update" MinWidth="75" MaxWidth="75" SortMemberPath="HasUpdate" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <iconPacks:PackIconMaterial Kind="CheckBold" Width="15" Height="15" Foreground="Green" HorizontalAlignment="Center" VerticalAlignment="Center" Visibility="{Binding HasUpdate, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Style x:Key="ItemStyle" TargetType="ListBoxItem">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                <Setter Property="VerticalContentAlignment" Value="Center" />
+                                <Setter Property="Padding" Value="5" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="ListBoxItem">
+                                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                            </Grid>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="RootGrid" Property="Background" Value="{DynamicResource MahApps.Brushes.Accent}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </mah:HamburgerMenu.Resources>
+                    </mah:HamburgerMenu>
+                </Border>
+            </mah:SplitView.Pane>
+
+            <mah:SplitView.Content>
+                <!-- Main Content -->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <!-- Top Bar 0 -->
+                    <Grid Grid.Row="0" Background="{StaticResource SecondaryAccent.Brush.W500}">
+                        <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent3}" BorderThickness="1 1 0 1">
+                            <Grid Height="35" Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Folder Path -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
+                                    <Border Background="{DynamicResource PrimaryAccent.Brush.W500}"
+                                            BorderBrush="{DynamicResource MahApps.Brushes.Accent3}"
+                                            BorderThickness="1"
+                                            CornerRadius="2"
+                                            Width="760"
+                                            Height="35"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center">
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <!-- Icon -->
+                                            <iconPacks:PackIconMaterial Kind="FolderOpenOutline"
+                                                                        Width="14"
+                                                                        Height="14"
+                                                                        Grid.Column="0"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="8,0,0,0" />
+
+                                            <!-- TextBox -->
+                                            <TextBox x:Name="ModsFolderTextBox"
+                                                     Grid.Column="1"
+                                                     IsReadOnly="True"
+                                                     VerticalAlignment="Center"
+                                                     TextAlignment="Left"
+                                                     Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                                     Background="Transparent"
+                                                     BorderThickness="0"
+                                                     Margin="5,0,5,0">
+                                                <TextBox.Style>
+                                                    <Style TargetType="TextBox">
+                                                        <Setter Property="OverridesDefaultStyle" Value="True" />
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="TextBox">
+                                                                    <ScrollViewer x:Name="PART_ContentHost" />
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </TextBox.Style>
+                                            </TextBox>
+
+                                            <!-- Buttons -->
+                                            <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,2,0">
+                                                <!-- Browse Button -->
+                                                <Button Click="BrowseFolder_Click"
+                                                        Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                                        Padding="4"
+                                                        Height="26" Width="26">
+                                                    <iconPacks:PackIconMaterial Width="18" Height="18" Kind="FolderOpen" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}">
+                                                        <iconPacks:PackIconMaterial.ToolTip>
+                                                            <TextBlock>
+                                                                <Run Text="Browse for a mods folder" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                                <LineBreak />
+                                                                <Run Text="Open the folder browser dialog to select a new mods folder." />
+                                                            </TextBlock>
+                                                        </iconPacks:PackIconMaterial.ToolTip>
+                                                    </iconPacks:PackIconMaterial>
+                                                </Button>
+                                                <!-- Refresh Button -->
+                                                <Button Click="RefreshMods_Click"
+                                                        Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                                        Padding="4"
+                                                        Height="26" Width="26">
+                                                    <iconPacks:PackIconMaterial Width="18" Height="18" Kind="FolderRefresh" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}">
+                                                        <iconPacks:PackIconMaterial.ToolTip>
+                                                            <TextBlock>
+                                                                <Run Text="Refresh mods folder" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                                <LineBreak />
+                                                                <Run Text="Refresh the current mods folder to check for any new or removed files." />
+                                                            </TextBlock>
+                                                        </iconPacks:PackIconMaterial.ToolTip>
+                                                    </iconPacks:PackIconMaterial>
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Game Version Dropdown -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1" Margin="0 0 5 0">
+                                    <ComboBox x:Name="GameVersionDropdown"
+                                              Width="210"
+                                              Height="35"
+                                              mah:ControlsHelper.CornerRadius="2"
+                                              Background="{DynamicResource PrimaryAccent.Brush.W500}"
+                                              BorderBrush="{DynamicResource MahApps.Brushes.Accent3}"
+                                              Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                              VerticalAlignment="Center"
+                                              BorderThickness="1"
+                                              VerticalContentAlignment="Center">
+
+                                        <ComboBox.Resources>
+                                            <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.MouseOver" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                                            <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.Focus" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                                            <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.PopupBorder" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                                            <SolidColorBrush x:Key="MahApps.Brushes.Gray1" Color="{StaticResource MahApps.Colors.Accent}" />
+                                            <SolidColorBrush x:Key="MahApps.Brushes.Gray5" Color="{StaticResource MahApps.Colors.Accent3}" />
+                                        </ComboBox.Resources>
+
+                                        <ComboBox.Style>
+                                            <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                                <Setter Property="Background" Value="Transparent" />
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                    </Trigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ComboBox.Style>
+
+                                        <ComboBox.ItemContainerStyle>
+                                            <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                                <Setter Property="Tag" Value="InDropDown" />
+                                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            </Style>
+                                        </ComboBox.ItemContainerStyle>
+
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <Grid x:Name="ItemRoot" VerticalAlignment="Center">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition x:Name="IconCol" Width="Auto" />
+                                                        <ColumnDefinition x:Name="TextCol" Width="Auto" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <!-- Icon -->
+                                                    <iconPacks:PackIconMaterial x:Name="HeaderIcon"
+                                                                                Kind="ClockOutline"
+                                                                                Width="14" Height="14"
+                                                                                VerticalAlignment="Center"
+                                                                                Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                                Margin="4,0,8,0" />
+
+                                                    <!-- Text -->
+                                                    <TextBlock x:Name="HeaderText"
+                                                               Text="Game Version:"
+                                                               Grid.Column="1"
+                                                               VerticalAlignment="Center"
+                                                               FontWeight="SemiBold"
+                                                               FontSize="12"
+                                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                                               Margin="0,0,10,0" />
+
+                                                    <!-- Pill -->
+                                                    <Border x:Name="VersionPill"
+                                                            Grid.Column="2"
+                                                            BorderBrush="{DynamicResource Alr.Brushes.GreenBase}"
+                                                            BorderThickness="1"
+                                                            CornerRadius="4"
+                                                            Padding="8,2,8,2"
+                                                            Background="{DynamicResource Alr.Brushes.Green20}"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding}"
+                                                                   FontSize="12"
+                                                                   FontWeight="SemiBold"
+                                                                   VerticalAlignment="Center"
+                                                                   Foreground="{DynamicResource SecondaryAccent.Brush.WA100}" />
+                                                    </Border>
+                                                </Grid>
+
+                                                <DataTemplate.Triggers>
+                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ComboBoxItem}}, Path=Tag}" Value="InDropDown">
+                                                        <Setter TargetName="HeaderIcon" Property="Visibility" Value="Collapsed" />
+                                                        <Setter TargetName="HeaderText" Property="Visibility" Value="Collapsed" />
+                                                        <Setter TargetName="VersionPill" Property="Background" Value="#33888888" />
+                                                        <Setter TargetName="VersionPill" Property="BorderBrush" Value="#66888888" />
+                                                        <Setter TargetName="VersionPill" Property="HorizontalAlignment" Value="Center" />
+                                                        <Setter TargetName="VersionPill" Property="Margin" Value="0" />
+                                                    </DataTrigger>
+                                                </DataTemplate.Triggers>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Top Bar 1 -->
+                    <Grid Grid.Row="1" Background="{StaticResource PrimaryAccent.Brush.W500}">
+                        <Border BorderBrush="{StaticResource MahApps.Brushes.Accent3}" BorderThickness="1 0 0 1">
+                            <Grid Height="35" Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Pill Indicators -->
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Grid.Column="0">
+                                    <StackPanel.Resources>
+                                        <!-- Border Style -->
+                                        <Style x:Key="StatusPillStyle" TargetType="Border">
+                                            <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.SemiTransparent}" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource MahApps.Brushes.Accent3}" />
+                                            <Setter Property="BorderThickness" Value="1" />
+                                            <Setter Property="CornerRadius" Value="12" />
+                                            <Setter Property="Padding" Value="10,2,10,2" />
+                                            <Setter Property="Margin" Value="0,0,10,0" />
+                                            <Setter Property="Height" Value="24" />
+                                        </Style>
+                                        <!-- Text Style -->
+                                        <Style x:Key="PillTextStyle" TargetType="TextBlock">
+                                            <Setter Property="FontSize" Value="12" />
+                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                            <Setter Property="Foreground" Value="{DynamicResource SecondaryAccent.Brush.WA400}" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                        <!-- Status Dot Style -->
+                                        <Style x:Key="StatusDotStyle" TargetType="Ellipse">
+                                            <Setter Property="Width" Value="8" />
+                                            <Setter Property="Height" Value="8" />
+                                            <Setter Property="Margin" Value="0,0,8,0" />
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </StackPanel.Resources>
+
+                                    <!-- Total Mods Pill -->
+                                    <Border Style="{StaticResource StatusPillStyle}" BorderBrush="{DynamicResource MahApps.Brushes.Accent3}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Style="{StaticResource StatusDotStyle}" Fill="{DynamicResource MahApps.Brushes.Gray6}" />
+                                            <TextBlock Text="Total Mods:" Style="{StaticResource PillTextStyle}" Margin="0,0,5,0" />
+                                            <TextBlock x:Name="TotalModsCountText" Text="0" Style="{StaticResource PillTextStyle}" Foreground="{DynamicResource MahApps.Brushes.Gray6}" FontWeight="Bold" />
+                                        </StackPanel>
+                                        <Border.ToolTip>
+                                            <TextBlock>
+                                                <Run Text="Total Mods" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                <LineBreak />
+                                                <Run Text="The total number of mods detected in your current directory." />
+                                            </TextBlock>
+                                        </Border.ToolTip>
+                                    </Border>
+
+                                    <!-- Updates Disabled Pill -->
+                                    <Border Style="{StaticResource StatusPillStyle}" BorderBrush="{DynamicResource MahApps.Brushes.Accent3}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Style="{StaticResource StatusDotStyle}" Fill="{DynamicResource Alr.Brushes.RedBase}" />
+                                            <TextBlock Text="Updates Disabled:" Style="{StaticResource PillTextStyle}" Margin="0,0,5,0" />
+                                            <TextBlock x:Name="DisabledCountText" Text="0" Style="{StaticResource PillTextStyle}" Foreground="{DynamicResource Alr.Brushes.RedBase}" FontWeight="Bold" />
+                                        </StackPanel>
+                                        <Border.ToolTip>
+                                            <TextBlock>
+                                                <Run Text="Updates Disabled" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                <LineBreak />
+                                                <Run Text="The number of mods excluded from update checks." />
+                                            </TextBlock>
+                                        </Border.ToolTip>
+                                    </Border>
+
+                                    <!-- Global Updates Available Pill -->
+                                    <Border Style="{StaticResource StatusPillStyle}" BorderBrush="{DynamicResource MahApps.Brushes.Accent3}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Style="{StaticResource StatusDotStyle}" Fill="{DynamicResource Alr.Brushes.YellowBase}" />
+                                            <TextBlock Text="Version Mismatch:" Style="{StaticResource PillTextStyle}" Margin="0,0,5,0" />
+                                            <TextBlock x:Name="VersionMismatchCountText" Text="0" Style="{StaticResource PillTextStyle}" Foreground="{DynamicResource Alr.Brushes.YellowBase}" FontWeight="Bold" />
+                                        </StackPanel>
+                                        <Border.ToolTip>
+                                            <TextBlock>
+                                                <Run Text="Version Mismatch" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                <LineBreak />
+                                                <Run Text="Updates are available, but they aren't explicitly marked for your selected game version. They are usually safe to install, but proceed with caution." />
+                                            </TextBlock>
+                                        </Border.ToolTip>
+                                    </Border>
+
+                                    <!-- Updates Available Pill -->
+                                    <Border Style="{StaticResource StatusPillStyle}" BorderBrush="{DynamicResource MahApps.Brushes.Accent3}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse Style="{StaticResource StatusDotStyle}" Fill="{DynamicResource Alr.Brushes.GreenBase}" />
+                                            <TextBlock Text="Updates Available:" Style="{StaticResource PillTextStyle}" Margin="0,0,5,0" />
+                                            <TextBlock x:Name="UpdateCountText" Text="0" Style="{StaticResource PillTextStyle}" Foreground="{DynamicResource Alr.Brushes.GreenBase}" FontWeight="Bold" />
+                                        </StackPanel>
+                                        <Border.ToolTip>
+                                            <TextBlock>
+                                                <Run Text="Updates Available" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                <LineBreak />
+                                                <Run Text="Mods with available updates that match your selected game version." />
+                                            </TextBlock>
+                                        </Border.ToolTip>
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Check for Updates Button -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="1">
+                                    <Button x:Name="CheckUpdatesButton"
+                                            Width="180"
+                                            Height="35"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="0 0 5 0"
+                                            Click="CheckUpdatesButton_Click">
+
+                                        <Button.Resources>
+                                            <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                            <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                        </Button.Resources>
+
+                                        <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <iconPacks:PackIconMaterial Kind="Update"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                            <TextBlock Text="Check for Updates"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+
+                                <!-- Update All Button -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2">
+                                    <Button x:Name="UpdateAllModsButton"
+                                            Width="180"
+                                            Height="35"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Margin="0 0 5 0"
+                                            Click="UpdateAllModsButton_Click">
+
+                                        <Button.Resources>
+                                            <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                            <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent3}" />
+                                        </Button.Resources>
+
+                                        <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="Auto" />
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <iconPacks:PackIconMaterial Kind="Download"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                            <TextBlock Text="Update All"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                        </Grid>
+                                    </Button>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Mods Table Section -->
+                    <Grid Grid.Row="3">
+                        <Border BorderBrush="{StaticResource MahApps.Brushes.Accent3}" BorderThickness="1 0 0 0" Background="{StaticResource PrimaryAccent.Brush.W500}">
+                            <!-- Mods Table -->
+                            <DataGrid x:Name="ModsDataGrid"
+                                      Grid.Row="1"
+                                      AutoGenerateColumns="False"
+                                      IsReadOnly="False"
+                                      CanUserAddRows="False"
+                                      Margin="0,0,0,10"
+                                      RowHeight="40"
+                                      ColumnHeaderHeight="45"
+                                      VerticalAlignment="Stretch"
+                                      HorizontalAlignment="Stretch">
+
+                                <DataGrid.Resources>
+                                    <SolidColorBrush x:Key="MahApps.Brushes.Gray5" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                    <SolidColorBrush x:Key="MahApps.Brushes.Gray2" Color="{StaticResource SecondaryAccent.Colors.WA400}" />
+                                    <SolidColorBrush x:Key="MahApps.Brushes.DataGridColumnHeader.SortArrowFill" Color="{StaticResource SecondaryAccent.Colors.WA400}" />
+
+                                    <Style TargetType="{x:Type DataGridColumnHeader}"
+                                           x:Key="CustomCenteredHeader"
+                                           BasedOn="{StaticResource CenteredMetroColumnHeader}">
+                                        <Setter Property="BorderThickness" Value="0,0,0,1" />
+                                        <Setter Property="BorderBrush" Value="{StaticResource MahApps.Brushes.Accent3}" />
+                                        <Setter Property="Background" Value="{StaticResource SecondaryAccent.Brush.W500}" />
+                                        <Setter Property="Foreground" Value="{StaticResource SecondaryAccent.Brush.WA400}" />
+                                    </Style>
+                                </DataGrid.Resources>
+
+                                <DataGrid.ColumnHeaderStyle>
+                                    <StaticResource ResourceKey="CustomCenteredHeader" />
+                                </DataGrid.ColumnHeaderStyle>
+
+                                <DataGrid.RowStyle>
+                                    <Style TargetType="DataGridRow">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Setter Property="BorderBrush" Value="Transparent" />
+                                        <Setter Property="BorderThickness" Value="0" />
+                                        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="DataGridRow">
+                                                    <DataGridCellsPresenter />
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </DataGrid.RowStyle>
+
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn x:Name="IgnoreColumn" Header="Ignore" Width="100">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding DisableUpdate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                          Checked="DisableUpdateCheckBox_Changed"
+                                                          Unchecked="DisableUpdateCheckBox_Changed"
+                                                          VerticalAlignment="Center"
+                                                          HorizontalAlignment="Center">
+                                                    <CheckBox.Resources>
+                                                        <SolidColorBrush x:Key="MahApps.Brushes.Highlight" Color="{DynamicResource Alr.Colors.RedBase}" />
+                                                        <SolidColorBrush x:Key="MahApps.Brushes.CheckBox" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                                                        <SolidColorBrush x:Key="MahApps.Brushes.CheckBox.MouseOver" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                                                    </CheckBox.Resources>
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTemplateColumn x:Name="ModPagesColumn" Header="Mod Page" MinWidth="80" MaxWidth="80" IsReadOnly="True">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                                        Width="25" Height="25"
+                                                        Click="OpenModPage_Click"
+                                                        Visibility="{Binding ModPageUrl, Converter={StaticResource StringToVisibility}}">
+                                                    <iconPacks:PackIconMaterial Width="22" Height="22" Kind="Web" Foreground="#68B1FF">
+                                                        <iconPacks:PackIconMaterial.ToolTip>
+                                                            <TextBlock>
+                                                                <Run Text="Open the" FontStyle="Italic" />
+                                                                <Run Text="{Binding Name}" FontWeight="Bold" FontStyle="Italic" />
+                                                                <Run Text="mod page in your browser" FontStyle="Italic" />
+                                                                <LineBreak />
+                                                                <Run Text="{Binding ModPageUrl}" Foreground="#50A4FF" />
+                                                            </TextBlock>
+                                                        </iconPacks:PackIconMaterial.ToolTip>
+                                                    </iconPacks:PackIconMaterial>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <DataGridTextColumn x:Name="FileNameColumn" Header="File Name" Foreground="{DynamicResource SecondaryAccent.Brush.WA400}" Binding="{Binding FileName}" MinWidth="225" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Mod Name" Binding="{Binding Name}" Foreground="{DynamicResource SecondaryAccent.Brush.WA100}" MinWidth="225" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
+                                    <DataGridTextColumn x:Name="GameVersionColumn" Header="Game Version" Binding="{Binding Game}" Foreground="{DynamicResource SecondaryAccent.Brush.WA400}" MinWidth="125" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Installed Version" Binding="{Binding Version}" Foreground="{DynamicResource SecondaryAccent.Brush.WA400}" MinWidth="125" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
+                                    <DataGridTextColumn Header="Latest Version" MinWidth="125" Width="*" IsReadOnly="True">
+                                        <DataGridTextColumn.ElementStyle>
+                                            <Style TargetType="TextBlock" BasedOn="{StaticResource CenterCellTextBlockStyle}">
+                                                <Setter Property="Text" Value="{Binding LatestVersion}" />
+                                                <Setter Property="Foreground">
+                                                    <Setter.Value>
+                                                        <MultiBinding Converter="{StaticResource VersionToColorConverter}">
+                                                            <Binding BindingGroupName="Version" Path="Version" />
+                                                            <Binding BindingGroupName="LatestVersion" Path="LatestVersion" />
+                                                            <Binding BindingGroupName="HasVersionMismatch" Path="HasVersionMismatch" />
+                                                        </MultiBinding>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </DataGridTextColumn.ElementStyle>
+                                    </DataGridTextColumn>
+
+                                    <DataGridTemplateColumn Header="Update" MinWidth="100" Width="*" SortMemberPath="HasUpdate" IsReadOnly="False">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                                        Width="40" Height="30"
+                                                        Click="UpdateModButton_Click"
+                                                        Visibility="{Binding HasUpdate, Converter={StaticResource BoolToVis}}">
+
+                                                    <iconPacks:PackIconMaterial Width="22" Height="22" Kind="Download">
+                                                        <iconPacks:PackIconMaterial.Foreground>
+                                                            <MultiBinding Converter="{StaticResource VersionToColorConverter}">
+                                                                <Binding Path="Version" />
+                                                                <Binding Path="LatestVersion" />
+                                                                <Binding Path="HasVersionMismatch" />
+                                                            </MultiBinding>
+                                                        </iconPacks:PackIconMaterial.Foreground>
+
+                                                        <iconPacks:PackIconMaterial.ToolTip>
+                                                            <TextBlock>
+                                                                <Run Text="Update Mod" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                                <LineBreak />
+                                                                <Run Text="Update a single mod." />
+                                                            </TextBlock>
+                                                        </iconPacks:PackIconMaterial.ToolTip>
+                                                    </iconPacks:PackIconMaterial>
+                                                </Button>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </mah:SplitView.Content>
+        </mah:SplitView>
+    </Grid>
+
+    <!-- Flyouts Section -->
+    <mah:MetroWindow.Flyouts>
+        <mah:FlyoutsControl>
+            <!-- App Settings Flyout -->
+            <mah:Flyout x:Name="AppSettingsFlyout"
+                        Header="App Settings"
+                        Position="Left"
+                        Width="450"
+                        Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                        Background="{StaticResource PrimaryAccent.Brush.W500}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                        BorderThickness="0 0 1 0"
+                        IsOpen="{Binding IsAppSettingsFlyoutOpen}">
+
+                <mah:Flyout.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                    <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+
+                    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MahApps.Styles.ScrollViewer}">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                            <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                        </Style.Resources>
+                    </Style>
+                </mah:Flyout.Resources>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="20,10,20,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Separator Grid.Row="0" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- General Section -->
+                            <TextBlock Grid.Row="1" Text="General" Foreground="{DynamicResource DarkOlive.Brush.WA700}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15" />
+
+                            <!-- Default Game Version Dropdown -->
+                            <Grid Grid.Row="2" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Default game version" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Select which game version is selected by default when the app opens."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,50,0" />
+                                </StackPanel>
+
+                                <ComboBox x:Name="DefaultGameVersionDropdown"
+                                          Grid.Column="1"
+                                          Width="150"
+                                          Height="35"
+                                          mah:ControlsHelper.CornerRadius="2"
+                                          Background="{DynamicResource PrimaryAccent.Brush.W500}"
+                                          BorderBrush="{DynamicResource MahApps.Brushes.Accent3}"
+                                          Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                          VerticalAlignment="Center"
+                                          BorderThickness="1"
+                                          VerticalContentAlignment="Center"
+                                          SelectionChanged="DefaultGameVersionDropdown_SelectionChanged"
+                                          mah:TextBoxHelper.Watermark="Select Version...">
+
+                                    <ComboBox.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.MouseOver" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.Border.Focus" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.ComboBox.PopupBorder" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray1" Color="{StaticResource MahApps.Colors.Accent}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray5" Color="{StaticResource MahApps.Colors.Accent3}" />
+                                    </ComboBox.Resources>
+
+                                    <ComboBox.Style>
+                                        <Style TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="Background" Value="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ComboBox.Style>
+
+                                    <ComboBox.ItemContainerStyle>
+                                        <Style TargetType="ComboBoxItem" BasedOn="{StaticResource {x:Type ComboBoxItem}}">
+                                            <Setter Property="Tag" Value="InDropDown" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        </Style>
+                                    </ComboBox.ItemContainerStyle>
+
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="VersionPill"
+                                                    BorderBrush="{DynamicResource Alr.Brushes.GreenBase}"
+                                                    BorderThickness="1"
+                                                    CornerRadius="4"
+                                                    Padding="8,2,8,2"
+                                                    Background="{DynamicResource Alr.Brushes.Green20}"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center">
+                                                <TextBlock Text="{Binding}"
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"
+                                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA100}" />
+                                            </Border>
+
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ComboBoxItem}}, Path=Tag}" Value="InDropDown">
+                                                    <Setter TargetName="VersionPill" Property="Background" Value="#33888888" />
+                                                    <Setter TargetName="VersionPill" Property="BorderBrush" Value="#66888888" />
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </Grid>
+
+                            <!-- Safe Mode -->
+                            <Grid Grid.Row="3" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Safe mode" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Only download stable mod releases and ignore pre-release versions. Enabling this filters out development and release candidate builds (e.g., 3.2.1-dev.1 or 1.2.3-rc.3)."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+                                <mah:ToggleSwitch Grid.Column="1" x:Name="SafeModeToggle"
+                                                  Header="" OnContent="" OffContent=""
+                                                  Margin="0,0,-100,0"
+                                                  HorizontalAlignment="Right"
+                                                  Toggled="SafeModeToggle_Toggled"
+                                                  Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+
+                            <Separator Grid.Row="4" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- Check for Updates on Startup -->
+                            <Grid Grid.Row="5" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Check for updates on startup" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Keep the application up to date by checking for updates on startup."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+                                <mah:ToggleSwitch Grid.Column="1" x:Name="CheckAppUpdatesToggle"
+                                                  Header="" OnContent="" OffContent=""
+                                                  Margin="0,0,-100,0"
+                                                  HorizontalAlignment="Right"
+                                                  Toggled="CheckAppUpdatesToggle_Toggled"
+                                                  Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Check for Updates Button -->
+                            <Grid Grid.Row="6" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Check for updates" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Manually check for the latest version immediately."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,200,0" />
+                                </StackPanel>
+
+                                <Button x:Name="CheckAppUpdatesButton"
+                                            Width="180"
+                                            Height="35"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0 0 0 0"
+                                            Click="CheckForUpdates_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconMaterial Kind="Update"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Check for Updates"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                            <Separator Grid.Row="7" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- Appearance Section -->
+                            <TextBlock Grid.Row="8" Text="Appearance" Foreground="{DynamicResource DarkOlive.Brush.WA700}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15" />
+
+                            <!-- Show ignore column in table -->
+                            <Grid Grid.Row="9" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Display ignore column" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Show/hide the ignore column in the table."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+                                <mah:ToggleSwitch Grid.Column="1" x:Name="ShowIgnoreToggle"
+                                                  Header="" OnContent="" OffContent=""
+                                                  Margin="0,0,-100,0"
+                                                  HorizontalAlignment="Right"
+                                                  Toggled="ShowIgnoreToggle_Toggled"
+                                                  Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Show mod page column in table -->
+                            <Grid Grid.Row="10" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Display mod page column" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Show/hide the mod page column in the table."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+                                <mah:ToggleSwitch Grid.Column="1" x:Name="ShowModPagesToggle"
+                                                  Header="" OnContent="" OffContent=""
+                                                  Margin="0,0,-100,0"
+                                                  HorizontalAlignment="Right"
+                                                  Toggled="ShowModPagesToggle_Toggled"
+                                                  Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Show file name column in table -->
+                            <Grid Grid.Row="11" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Display file name column" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Show/hide the file name column in the table."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+                                <mah:ToggleSwitch Grid.Column="1" x:Name="ShowFileNamesToggle"
+                                                  Header="" OnContent="" OffContent=""
+                                                  Margin="0,0,-100,0"
+                                                  HorizontalAlignment="Right"
+                                                  Toggled="ShowFileNamesToggle_Toggled"
+                                                  Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+
+                            <!-- Show game version column in table -->
+                            <Grid Grid.Row="12" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                    <TextBlock Text="Display game version column" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Show/hide the game version column in the table."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+                                <mah:ToggleSwitch Grid.Column="1" x:Name="ShowGameVersionToggle"
+                                                  Header="" OnContent="" OffContent=""
+                                                  Margin="0,0,-100,0"
+                                                  HorizontalAlignment="Right"
+                                                  Toggled="ShowGameVersionToggle_Toggled"
+                                                  Style="{StaticResource MahApps.Styles.ToggleSwitch}"
+                                                  VerticalAlignment="Center" />
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+
+                    <!-- App Settings Flyout Footer -->
+                    <Border Grid.Row="1" Background="{StaticResource PrimaryAccent.Brush.W700}" BorderBrush="{StaticResource MahApps.Brushes.Accent3}" BorderThickness="0 1 0 0" Padding="15">
+                        <!-- Tips Paragraph -->
+                        <TextBlock Grid.Row="1"
+                                   Foreground="{DynamicResource SecondaryAccent.Brush.WA400.O80}"
+                                   FontSize="12"
+                                   TextAlignment="Center"
+                                   Margin="0,0,0,0"
+                                   Text="Your changes are saved automatically." />
+                    </Border>
+                </Grid>
+            </mah:Flyout>
+
+            <!-- Changelog Flyout -->
+            <mah:Flyout x:Name="ChangelogFlyout"
+                        Header="Changelog"
+                        Position="Left"
+                        Width="1293"
+                        Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                        Background="{StaticResource PrimaryAccent.Brush.W500}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                        BorderThickness="0 0 1 0"
+                        IsOpen="{Binding IsChangelogFlyoutOpen}"
+                        IsOpenChanged="ChangelogFlyout_IsOpenChanged">
+
+                <mah:Flyout.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                    <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+
+                    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MahApps.Styles.ScrollViewer}">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                            <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                        </Style.Resources>
+                    </Style>
+                </mah:Flyout.Resources>
+
+                <Grid Margin="20">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <md:MarkdownScrollViewer x:Name="ChangelogRender"
+                                     MarkdownStyle="{Binding ElementName=root, Path=MarkdownStyle}"
+                                     HorizontalAlignment="Stretch">
+                        </md:MarkdownScrollViewer>
+                    </ScrollViewer>
+                </Grid>
+            </mah:Flyout>
+
+            <!-- Modlist Tools Flyout -->
+            <mah:Flyout x:Name="ModlistToolsFlyout"
+                        Header="Modlist Tools"
+                        Position="Left"
+                        Width="450"
+                        Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                        Background="{StaticResource PrimaryAccent.Brush.W500}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                        BorderThickness="0 0 1 0"
+                        IsOpen="{Binding IsModlistToolsFlyoutOpen}">
+
+                <mah:Flyout.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                    <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+
+                    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MahApps.Styles.ScrollViewer}">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                            <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                        </Style.Resources>
+                    </Style>
+                </mah:Flyout.Resources>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="20,10,20,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Separator Grid.Row="0" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- Copy to Clipboard Section -->
+                            <TextBlock Grid.Row="1" Text="Copy to Clipboard" Foreground="{DynamicResource DarkOlive.Brush.WA700}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15" />
+
+                            <!-- Copy with Discord Markdown -->
+                            <Grid Grid.Row="2" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Copy modlist with markdown" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Copy your mod list to the clipboard pre-formatted using Discord's markdown."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+
+                                <Button x:Name="CopyWithMarkdownButton"
+                                        Width="90"
+                                        Height="35"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Margin="0 0 0 0"
+                                        Click="CopyModlistMarkdown_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconMaterial Kind="ClipboardText"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Copy"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                            <!-- Copy Raw Output -->
+                            <Grid Grid.Row="3" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Copy modlist" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Copy your mod list to the clipboard as unformatted plain text."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+
+                                <Button x:Name="CopyRawButton"
+                                            Width="90"
+                                            Height="35"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0 0 0 0"
+                                            Click="CopyModlist_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconMaterial Kind="ClipboardText"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Copy"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                            <Separator Grid.Row="4" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- Advanced Modlist Tools Section -->
+                            <TextBlock Grid.Row="5" Text="Advanced" Foreground="{DynamicResource DarkOlive.Brush.WA700}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,15" />
+
+                            <!-- Reinstall Mods -->
+                            <Grid Grid.Row="6" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Reinstall mods" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Purges the mod folder and restores a clean copy of every mod at its current version, ignoring updates."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+
+                                <Button x:Name="CleanModsFolderButton"
+                                            Width="150"
+                                            Height="35"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0 0 0 0"
+                                            Click="CleanModsFolder_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource Alr.Colors.Red20}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource Alr.Colors.Red40}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconMaterial Kind="DeleteRestore"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Reinstall Mods"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                            <!-- Remove Duplicate Mods -->
+                            <Grid Grid.Row="7" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,50,0">
+                                    <TextBlock Text="Remove duplicate mods" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}" FontSize="14" />
+                                    <TextBlock Text="Scan your mods folder for duplicate mods and delete older versions while keeping the newest versions."
+                                               Foreground="{DynamicResource SecondaryAccent.Brush.WA700}" FontSize="12" TextWrapping="Wrap" Padding="0,0,150,0" />
+                                </StackPanel>
+
+                                <Button x:Name="RemoveDuplicateModsButton"
+                                            Width="150"
+                                            Height="35"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Margin="0 0 0 0"
+                                            Click="RemoveDuplicateMods_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource Alr.Colors.Red20}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource Alr.Colors.Red40}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconMaterial Kind="TrashCan"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Remove"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </mah:Flyout>
+
+            <!-- Tips Flyout -->
+            <mah:Flyout x:Name="TipsFlyout"
+                        Header="Leave a Tip"
+                        Position="Left"
+                        Width="450"
+                        Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                        Background="{StaticResource PrimaryAccent.Brush.W500}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                        BorderThickness="0 0 1 0"
+                        IsOpen="{Binding IsTipsFlyoutOpen}">
+
+                <mah:Flyout.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                    <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+
+                    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MahApps.Styles.ScrollViewer}">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                            <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                        </Style.Resources>
+                    </Style>
+                </mah:Flyout.Resources>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="20,10,20,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Separator Grid.Row="0" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- Tips Paragraph -->
+                            <TextBlock Grid.Row="1"
+                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                                       FontSize="12"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,15"
+                                       Padding="25,10,25,10"
+                                       Text="VSSuite is a completely free hobby project built in my spare time. Since there are no server costs to maintain, any tips left here go straight toward supporting me personally. Honestly, seeing a tip come in is a massive confidence booster and a great reminder that the hours spent staring at code are making a difference. Thank you for supporting the project!" />
+
+                            <Separator Grid.Row="4" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,25" />
+
+                            <TextBlock Grid.Row="5" Text="Fuel the Project" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="{DynamicResource DarkOlive.Brush.WA700}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,25" />
+
+                            <!-- Buy Me A Coffee Button -->
+                            <Grid Grid.Row="6" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="BuyMeACoffeeButton"
+                                        Width="175"
+                                        Height="35"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Margin="0 0 0 0"
+                                        Click="OpenBuyMeACoffee_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconSimpleIcons Kind="BuyMeACoffee"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Buy Me A Coffee"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+
+                            <!-- Patreon Button -->
+                            <Grid Grid.Row="7" Margin="0,0,0,20">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Button x:Name="PatreonButton"
+                                        Width="175"
+                                        Height="35"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Margin="0 0 0 0"
+                                        Click="OpenPatreon_Click">
+
+                                    <Button.Resources>
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray10" Color="{StaticResource PrimaryAccent.Colors.Accent}" />
+                                        <SolidColorBrush x:Key="MahApps.Brushes.Gray8" Color="{StaticResource MahApps.Colors.Accent4}" />
+                                    </Button.Resources>
+
+                                    <Grid HorizontalAlignment="Stretch" Width="{Binding Path=ActualWidth, RelativeSource={RelativeSource AncestorType=Button}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <iconPacks:PackIconSimpleIcons Kind="Patreon"
+                                                                        Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                        Width="18"
+                                                                        Height="18"
+                                                                        VerticalAlignment="Center"
+                                                                        Margin="10,0,0,0"
+                                                                        Grid.Column="0" />
+
+                                        <TextBlock Text="Patreon"
+                                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA100}"
+                                                       FontWeight="SemiBold"
+                                                       FontSize="12"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       Grid.Column="1"
+                                                       Margin="0,0,18,0" />
+                                    </Grid>
+                                </Button>
+                            </Grid>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </mah:Flyout>
+
+            <!-- Info Flyout -->
+            <mah:Flyout x:Name="InfoFlyout"
+                        Header="Information"
+                        Position="Left"
+                        Width="450"
+                        Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                        Background="{StaticResource PrimaryAccent.Brush.W500}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                        BorderThickness="0 0 1 0"
+                        IsOpen="{Binding IsInformationFlyoutOpen}">
+
+                <mah:Flyout.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                    <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+
+                    <Style TargetType="{x:Type ScrollViewer}" BasedOn="{StaticResource MahApps.Styles.ScrollViewer}">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                            <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                        </Style.Resources>
+                    </Style>
+                </mah:Flyout.Resources>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+                        <Grid Margin="20,10,20,20">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <Separator Grid.Row="0" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,20" />
+
+                            <!-- Information Paragraph -->
+                            <TextBlock Grid.Row="1"
+                                       Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                                       FontSize="12"
+                                       TextAlignment="Center"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,15"
+                                       Padding="25,10,25,10"
+                                       Text="Welcome to the information panel. This list is intentionally short because everything else in the app should be entirely self-explanatory. This space is just reserved for the occasional feature that might benefit from a tiny bit of extra context." />
+
+                            <Separator Grid.Row="2" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,25" />
+
+                            <!-- Version Mismatch Explanation -->
+                            <StackPanel Grid.Row="3" Margin="10,0,10,50">
+                                <TextBlock Text="Version Mismatch"
+                                           TextAlignment="Center"
+                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,4" />
+                                <TextBlock Text="An update is available, but the author hasn't explicitly tagged it for your selected game version.&#x0a;&#x0a;You'll see this most often right after a major game update, when mod authors haven't yet updated their version tags.&#x0a;&#x0a;Because many mods work perfectly fine on newer game versions without changes, this feature ensures you don't miss out on those files. However, instead of blindly installing them and risking a broken setup, the tool flags these mismatches and requires a manual update so you can proceed with caution."
+                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                                           TextAlignment="Center"
+                                           FontSize="12"
+                                           Opacity="0.8"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+
+                            <!-- Mod Browser Explanation -->
+                            <StackPanel Grid.Row="4" Margin="10,0,10,50">
+                                <TextBlock Text="Mod Browser"
+                                           TextAlignment="Center"
+                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                                           FontSize="14"
+                                           FontWeight="Bold"
+                                           Margin="0,0,0,4" />
+                                <TextBlock Text="The mod browser introduces an embedded tool called WebView2, which essentially runs a lightweight Chromium browser window inside the app. Because of this, you may notice slightly higher memory usage when the browser is active, though testing shows it typically sits at around 150MB of RAM.&#x0a;&#x0a;Please note that while the browser gives you full access to the mod repository, it operates independently from the app's version filtering.&#x0a;&#x0a;It will not automatically restrict search results to your targeted game version, so you will need to manually ensure you are downloading the correct file version for your game."
+                                           Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                                           TextAlignment="Center"
+                                           FontSize="12"
+                                           Opacity="0.8"
+                                           TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Grid>
+                    </ScrollViewer>
+                </Grid>
+            </mah:Flyout>
+
+            <!-- Mod Browser Flyout -->
+            <mah:Flyout x:Name="ModBrowserFlyout"
+                        Header="Mod Browser"
+                        Position="Left"
+                        MinWidth="1293"
+                        Width="1293"
+                        Foreground="{DynamicResource SecondaryAccent.Brush.WA200}"
+                        Background="{StaticResource PrimaryAccent.Brush.W500}"
+                        BorderBrush="{DynamicResource MahApps.Brushes.Accent}"
+                        BorderThickness="0 0 1 0"
+                        IsOpen="{Binding IsModBrowserFlyoutOpen}"
+                        IsOpenChanged="ModBrowserFlyout_IsOpenChanged"
+                        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+                        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks">
+
+                <mah:Flyout.Resources>
+                    <SolidColorBrush x:Key="MahApps.Brushes.Gray3" Color="{DynamicResource MahApps.Colors.Accent3}" />
+                    <SolidColorBrush x:Key="MahApps.Brushes.Thumb" Color="{DynamicResource MahApps.Colors.Accent2}" />
+                </mah:Flyout.Resources>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0" Margin="20,10,20,10">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <Separator Grid.Row="0" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,0,0,10" />
+
+                        <!-- Address Bar -->
+                        <Grid Grid.Row="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="BrowserBackButton"
+                                    Grid.Column="0"
+                                    Width="35" Height="35"
+                                    Margin="0,0,6,0"
+                                    Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                    Click="BrowserBackButton_Click">
+                                <iconPacks:PackIconMaterial Kind="ArrowLeft" Width="18" Height="18" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}">
                                     <iconPacks:PackIconMaterial.ToolTip>
                                         <TextBlock>
-                                            <Run Text="{Binding Name}" FontWeight="Bold" />
-                                            <Run Text=" has an update" />
+                                            <Run Text="Previous Page" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
                                         </TextBlock>
                                     </iconPacks:PackIconMaterial.ToolTip>
                                 </iconPacks:PackIconMaterial>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                            </Button>
 
-                    <DataGridTemplateColumn Header="Mod Page" MinWidth="80" MaxWidth="80" IsReadOnly="True">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Width="25" Height="25" Click="OpenModPage_Click" Style="{DynamicResource MahApps.Styles.Button.Circle}" Visibility="{Binding ModPageUrl, Converter={StaticResource StringToVisibility}}">
-                                    <iconPacks:PackIconMaterial Width="22" Height="22" Kind="Web" Foreground="#356CA7">
-                                        <iconPacks:PackIconMaterial.ToolTip>
-                                            <TextBlock>
-                                                <Run Text="Open the" FontStyle="Italic" />
-                                                <Run Text="{Binding Name}" FontWeight="Bold" FontStyle="Italic" />
-                                                <Run Text="mod page in your browser" FontStyle="Italic" />
-                                                <LineBreak />
-                                                <Run Text="{Binding ModPageUrl}" Foreground="#50A4FF" />
-                                            </TextBlock>
-                                        </iconPacks:PackIconMaterial.ToolTip>
-                                    </iconPacks:PackIconMaterial>
-                                </Button>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                            <Button x:Name="BrowserForwardButton"
+                                    Grid.Column="1"
+                                    Width="35" Height="35"
+                                    Margin="0,0,6,0"
+                                    Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                    Click="BrowserForwardButton_Click">
+                                <iconPacks:PackIconMaterial Kind="ArrowRight" Width="18" Height="18" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}">
+                                    <iconPacks:PackIconMaterial.ToolTip>
+                                        <TextBlock>
+                                            <Run Text="Next Page" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                        </TextBlock>
+                                    </iconPacks:PackIconMaterial.ToolTip>
+                                </iconPacks:PackIconMaterial>
+                            </Button>
 
-                    <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" MinWidth="225" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Mod Name" Binding="{Binding Name}" MinWidth="225" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Game Version" Binding="{Binding Game}" MinWidth="125" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Installed Version" Binding="{Binding Version}" MinWidth="125" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
-                    <DataGridTextColumn Header="Latest Version" Binding="{Binding LatestVersion}" MinWidth="125" Width="*" ElementStyle="{DynamicResource CenterCellTextBlockStyle}" IsReadOnly="True" />
-                    <DataGridTemplateColumn Header="" MinWidth="100" Width="*" IsReadOnly="False">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Update" Width="75" Height="30" Click="UpdateModButton_Click" Visibility="{Binding HasUpdate, Converter={StaticResource BoolToVis}}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
-        </Grid>
+                            <Button x:Name="BrowserHomeButton"
+                                    Grid.Column="2"
+                                    Width="35" Height="35"
+                                    Margin="0,0,12,0"
+                                    Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                    Click="BrowserHomeButton_Click">
+                                <iconPacks:PackIconMaterial Kind="HomeVariant" Width="18" Height="18" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}">
+                                    <iconPacks:PackIconMaterial.ToolTip>
+                                        <TextBlock>
+                                            <Run Text="Home" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                            <LineBreak />
+                                            <Run Text="Navigate straight back to the Vintage Story Mod Database index page." />
+                                        </TextBlock>
+                                    </iconPacks:PackIconMaterial.ToolTip>
+                                </iconPacks:PackIconMaterial>
+                            </Button>
 
-        <!-- Bottom Section -->
-        <Grid Grid.Row="1" Background="#212121">
-            <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent4}" BorderThickness="0 1 0 0">
-                <Grid Height="50" Margin="10">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
+                            <Border Grid.Column="3"
+                                    Background="{DynamicResource PrimaryAccent.Brush.W500}"
+                                    BorderBrush="{DynamicResource MahApps.Brushes.Accent3}"
+                                    BorderThickness="1"
+                                    CornerRadius="2"
+                                    Height="35">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Grid.Column="0">
-                        <Button x:Name="CheckUpdatesButton"
-                                Content="Check for Mod Updates"
-                                Width="150"
-                                Height="30"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="15 0 0 0"
-                                Click="CheckUpdatesButton_Click" />
-                    </StackPanel>
+                                    <iconPacks:PackIconMaterial Kind="Earth"
+                                                                Width="14" Height="14"
+                                                                Grid.Column="0"
+                                                                Foreground="{DynamicResource MahApps.Brushes.Accent3}"
+                                                                VerticalAlignment="Center"
+                                                                Margin="8,0,0,0" />
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Column="1">
-                        <TextBox x:Name="ModsFolderTextBox"
-                                 Width="660"
-                                 Height="20"
-                                 IsReadOnly="True"
-                                 VerticalAlignment="Center"
-                                 TextAlignment="Center"
-                                 Margin="0,0,5,0"
-                                 Foreground="{DynamicResource MahApps.Brushes.Gray6}"
-                                 Background="{DynamicResource MahApps.Brushes.Window.Background}"
-                                 BorderBrush="Transparent">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                    <Setter Property="BorderBrush" Value="Transparent" />
-                                    <Setter Property="BorderThickness" Value="0" />
-                                    <Setter Property="OverridesDefaultStyle" Value="True" />
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
-                    </StackPanel>
+                                    <TextBox x:Name="BrowserAddressBar"
+                                             Grid.Column="1"
+                                             VerticalAlignment="Center"
+                                             TextAlignment="Left"
+                                             Foreground="{DynamicResource SecondaryAccent.Brush.WA400}"
+                                             Background="Transparent"
+                                             BorderThickness="0"
+                                             Margin="8,0,5,0"
+                                             IsReadOnly="True"
+                                             Text="{x:Static local:MainWindow.VSModRepoHomeUrl}"
+                                             KeyDown="BrowserAddressBar_KeyDown">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox">
+                                                <Setter Property="OverridesDefaultStyle" Value="True" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="TextBox">
+                                                            <ScrollViewer x:Name="PART_ContentHost" />
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Grid.Column="2">
-                        <Button x:Name="UpdateAllModsButton"
-                                Content="Update All Mods"
-                                Width="150"
-                                Height="30"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Margin="0 0 15 0"
-                                Click="UpdateAllModsButton_Click" />
-                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,0,4,0">
+                                        <Button x:Name="BrowserRefreshButton"
+                                                Click="BrowserRefreshButton_Click"
+                                                Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                                Padding="4"
+                                                Height="26" Width="26">
+                                            <iconPacks:PackIconMaterial Width="16" Height="16" Kind="Refresh" Foreground="{DynamicResource SecondaryAccent.Brush.WA200}">
+                                                <iconPacks:PackIconMaterial.ToolTip>
+                                                    <TextBlock>
+                                                        <Run Text="Reload" Foreground="{DynamicResource MahApps.Brushes.Gray.SemiTransparent}" />
+                                                    </TextBlock>
+                                                </iconPacks:PackIconMaterial.ToolTip>
+                                            </iconPacks:PackIconMaterial>
+                                        </Button>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </Grid>
+
+                        <Separator Grid.Row="2" Background="{StaticResource MahApps.Brushes.Accent3}" Margin="0,10,0,10" />
+                    </Grid>
+
+                    <Border BorderBrush="{DynamicResource MahApps.Brushes.Accent3}" BorderThickness="2" Grid.Row="1" Margin="20,0,20,20">
+                        <wv2:WebView2 x:Name="ModWebView" NavigationCompleted="WebView_NavigationCompleted" />
+                    </Border>
                 </Grid>
-            </Border>
-        </Grid>
-    </Grid>
+            </mah:Flyout>
+        </mah:FlyoutsControl>
+    </mah:MetroWindow.Flyouts>
 </mah:MetroWindow>

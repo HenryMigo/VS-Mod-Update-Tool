@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Data;
 
-namespace VSModUpdater.Resources.Functions.Converters
+namespace VSSuite.Resources.Functions.Converters
 {
     public class StringNotNullOrEmptyToVisibilityConverter : IValueConverter
     {

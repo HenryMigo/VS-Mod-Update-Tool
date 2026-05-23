@@ -1,16 +1,16 @@
-﻿<Application x:Class="VSModUpdater.App"
+﻿<Application x:Class="VSSuite.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:local="clr-namespace:VSModUpdater"
+             xmlns:local="clr-namespace:VSSuite"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Green.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/VS-Mod-Update-Tool;component/Resources/Themes/Dark.DarkOliveGreen.xaml" />
+                <!-- <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Themes/Dark.Green.xaml" /> -->
+                <ResourceDictionary Source="pack://application:,,,/VSSuite;component/Resources/Themes/Dark.DarkOliveGreen.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <!-- Mod Table Header Styling -->

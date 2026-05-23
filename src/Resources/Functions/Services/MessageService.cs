@@ -2,7 +2,7 @@
 using MahApps.Metro.Controls.Dialogs;
 using Application = System.Windows.Application;
 
-namespace VSModUpdater.Resources.Functions.Services
+namespace VSSuite.Resources.Functions.Services
 {
     public static class MessageService
     {
@@ -13,8 +13,7 @@ namespace VSModUpdater.Resources.Functions.Services
 
         public static async Task ShowProgress(string title, string message, Func<IProgress<double>, Task> operation)
         {
-            var mainWindow = Application.Current.MainWindow as MetroWindow;
-            if (mainWindow == null)
+            if (Application.Current.MainWindow is not MetroWindow mainWindow)
                 throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
 
             var controller = await mainWindow.ShowProgressAsync(title, message);
@@ -33,10 +32,7 @@ namespace VSModUpdater.Resources.Functions.Services
 
         public static async Task<bool> ShowYesNo(string title, string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             var settings = new MetroDialogSettings
             {
                 AffirmativeButtonText = "Yes",
@@ -55,40 +51,28 @@ namespace VSModUpdater.Resources.Functions.Services
 
         public static async Task ShowInfo(string title, string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             await mainWindow.ShowMessageAsync(title, message, MessageDialogStyle.Affirmative);
         }
 
         public static async Task ShowWarning(string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             await mainWindow.ShowMessageAsync("Warning", message, MessageDialogStyle.Affirmative);
         }
 
         public static async Task ShowError(string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             await mainWindow.ShowMessageAsync("Error", message, MessageDialogStyle.Affirmative);
         }
 
-        // ============ Additional dialogs for VSModUpdater ============
+        // ============ Additional dialogs for VSSuite ============
 
         // Yes/Cancel
         public static async Task<bool> ShowYesCancel(string title, string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             var settings = new MetroDialogSettings
             {
                 AffirmativeButtonText = "Yes",
@@ -105,13 +89,30 @@ namespace VSModUpdater.Resources.Functions.Services
             return result == MessageDialogResult.Affirmative;
         }
 
+        // Ok
+        public static async Task<bool> ShowOk(string title, string message)
+        {
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
+
+            var settings = new MetroDialogSettings
+            {
+                AffirmativeButtonText = "OK"
+            };
+
+            var result = await mainWindow.ShowMessageAsync(
+                title,
+                message,
+                MessageDialogStyle.Affirmative,
+                settings
+            );
+
+            return result == MessageDialogResult.Affirmative;
+        }
+
         // Modlist Output
         public static async Task ShowModOutput(string title, string message, string textboxText)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             var settings = new MetroDialogSettings
             {
                 AffirmativeButtonText = "Ok",
@@ -131,14 +132,10 @@ namespace VSModUpdater.Resources.Functions.Services
             }
         }
 
-
         // TextBox input dialog for inputting mod page links
         public static async Task<string> ShowInput(string title, string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             var settings = new MetroDialogSettings
             {
                 AffirmativeButtonText = "Ok",
@@ -156,10 +153,7 @@ namespace VSModUpdater.Resources.Functions.Services
         // Folder browser dialog for startup
         public static async Task<bool> ShowBrowseCancel(string title, string message)
         {
-            var mainWindow = GetMainWindow();
-            if (mainWindow == null)
-                throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
-
+            var mainWindow = GetMainWindow() ?? throw new InvalidOperationException("Main window is not a MetroWindow or has not been set.");
             var settings = new MetroDialogSettings
             {
                 AffirmativeButtonText = "Browse",

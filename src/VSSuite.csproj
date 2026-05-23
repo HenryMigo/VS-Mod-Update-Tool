@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net8.0-windows</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	  
+		<!-- Single file publish settings -->
+		<PublishSingleFile>true</PublishSingleFile>
+		<IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+		<SelfContained>false</SelfContained>
+		<EnableCompressionInSingleFile>false</EnableCompressionInSingleFile>
+	  
+		<!-- Generate assembly info -->
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+
+		<!-- Versioning -->
+		<AssemblyVersion>0.7.0.0</AssemblyVersion>
+		<FileVersion>0.7.0.0</FileVersion>
+		<InformationalVersion>0.7.0</InformationalVersion>
+		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+	  
+		<!-- File Info -->
+		<AssemblyName>VSSuite</AssemblyName>
+		<Product>VSSuite</Product>
+		<Description>A tool for Vintage Story players to easily handle mod updates.</Description>
+		<Company>AriesLR</Company>
+		<Title>VSSuite</Title>
+		<Authors>AriesLR</Authors>
+		<Copyright>Copyright 2026 AriesLR</Copyright>
+		<ApplicationIcon>appicon.ico</ApplicationIcon>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Page Remove="Resources\Themes\Dark.DarkOliveGreen.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="appicon.ico" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MahApps.Metro" Version="2.4.11" />
+		<PackageReference Include="MahApps.Metro.IconPacks.Core" Version="6.2.1" />
+		<PackageReference Include="MahApps.Metro.IconPacks.Material" Version="6.2.1" />
+		<PackageReference Include="MahApps.Metro.IconPacks.SimpleIcons" Version="6.2.1" />
+		<PackageReference Include="MdXaml" Version="1.27.0" />
+		<PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3967.48" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+		<PackageReference Include="NuGet.Versioning" Version="7.6.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Resource Include="Resources\Themes\Dark.DarkOliveGreen.xaml">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+		</Resource>
+	</ItemGroup>
+
+	<!-- Self-Sign the Application, if the envar isn't available, do not sign -->
+	<Target Name="SignSingleFile" AfterTargets="Publish" Condition="'$(VSSUITE_SIGN_THUMBPRINT)' != ''">
+		<Message Importance="High" Text="Signing executable with environment certificate..." />
+		<Exec Command="&quot;C:\Program Files (x86)\Windows Kits\10\bin\10.0.26100.0\x64\signtool.exe&quot; sign /sha1 &quot;$(VSSUITE_SIGN_THUMBPRINT)&quot; /tr http://timestamp.digicert.com /td sha256 /fd sha256 &quot;$(PublishDir)VSSuite.exe&quot;" />
+	</Target>
+
+</Project>

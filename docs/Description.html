@@ -1,86 +1,159 @@
-<div style="height: auto; width: auto; margin: auto; padding: 20px; background: linear-gradient(to top, #0d1117 90%, #0d111700 99%); color: #dde2e7; font-family: 'Segoe UI'; line-height: 1.6;">
+<div style="height: auto; width: auto; margin: auto; padding: 20px; background: linear-gradient(to top, #131510 90%, #13151000 99%); color: #7A8A6B; font-family: 'Segoe UI'; line-height: 1.6;">
   <div style="max-width: 1650px; margin-top: 200px; margin-left: auto; margin-right: auto; margin-bottom: auto;">
 
-    <div style="border: 1px solid #3d444d; border-radius: 5px; background: #0d1117; overflow: hidden;">
-      <div style="background: #151b23; padding: 5px; border-bottom: 1px solid #3d444d; font-weight: 600; font-size: 22px; text-align: center;">
+    <div style="border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
         Description
       </div>
       <div style="padding: 20px 60px; margin: auto; text-align: center;">
         <p>
-          VS Mod Update Tool does exactly what the name says, it's a tool for updating your Vintage Story mods. This was primarily made and is actively being used for our server, Covert Paradise, but can easily find use for other server owners or even players for keeping their singleplayer mods updated.
+          VSSuite (formerly VS-Mod-Update-Tool) is a tool designed for updating your Vintage Story mods. This was primarily made for use on our server, but has since grown into a full featured mod management application with a wide variety of tools and features to help you manage your modlist and keep it up to date with the latest versions.
         </p>
       </div>
     </div>
 
-    <div style="margin-top: 20px; border: 1px solid #3d444d; border-radius: 5px; background: #0d1117; overflow: hidden;">
-      <div style="background: #151b23; padding: 5px; border-bottom: 1px solid #3d444d; font-weight: 600; font-size: 22px; text-align: center;">
+    <div style="margin-top: 20px; border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
         Requirements
       </div>
-      <div style="padding: 20px 60px; margin: auto;">
-        <ul>
-            <li><strong>Windows PC/Server</strong></li>
+      <div style="padding: 20px 60px; margin: auto; color: #7A8A6B;">
+        <h3 style="margin-top: 0; margin-bottom: 10px; font-size: 18px; color: #7A8A6B;">Software</h3>
+        <ul style="margin-bottom: 20px;">
+          <li><strong><a href="https://dotnet.microsoft.com/en-us/download/dotnet/8.0" target="_blank" style="color: #6bbe60; text-decoration: none;">.NET 8.0 Runtime</a></strong>
+            <ul>
+              <li>This is likely already installed on your system.</li>
+            </ul>
+          </li>
+          <li style="margin-top: 10px;"><strong><a href="https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH#download" target="_blank" style="color: #6bbe60; text-decoration: none;">WebView2</a></strong>
+            <ul>
+              <li>If this is missing from your system, the application will automatically prompt you to download it when opening the mod browser. If you choose not to use the mod browser you can continue without WebView2.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3 style="margin-bottom: 10px; font-size: 18px; color: #7A8A6B;">OS Support</h3>
+        <ul style="margin-bottom: 0;">
+          <li><strong>Windows 10/11</strong>
+            <ul>
+              <li>Older versions of windows will likely still work.</li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
 
-    <div style="margin-top: 20px; border: 1px solid #3d444d; border-radius: 5px; background: #0d1117; overflow: hidden;">
-      <div style="background: #151b23; padding: 5px; border-bottom: 1px solid #3d444d; font-weight: 600; font-size: 22px; text-align: center;">
+    <div style="margin-top: 20px; border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
         Features
       </div>
       <div style="padding: 20px 60px; margin: auto;">
         <ul>
             <li><strong>Automatic Mod Scanning</strong>: Reads every mod in your selected folder and extracts key details from each <code>modinfo.json</code>.</li>
-            <li><strong>Update Checking</strong>: Uses the Vintage Story Mods API to fetch the latest versions and game compatibility data, comparing them against your installed mods.</li>
-            <li><strong>Version Tracking</strong>: Highlights which mods have updates available directly in the main table.</li>
+            
+            <li><strong>Update Checking</strong>: Uses the Vintage Story Mods API to fetch the latest versions and game compatibility data, comparing them against your installed mods.
+                <ul>
+                    <li>Checks compatibility against a user selected target game version via a dropdown menu.</li>
+                    <li>Highlights available updates instantly in the main data table.</li>
+                </ul>
+            </li>
+            
+            <li><strong>Version Tracking</strong>: Highlights which mods have updates available in the main table.</li>
+            
             <li><strong>Batch Updates</strong>: Update and replace all outdated mods at once with the latest versions.</li>
+            
             <li><strong>Individual Mod Updates</strong>: Update a single mod independently, even if multiple mods have updates available.</li>
-            <li><strong>Detailed Update Summary</strong>: Displays a clear summary of all updated mods along with their version changes.</li>
-            <li><strong>Ignore Mod Updates</strong>: Simply click the checkbox beside a mod to ignore checking for updates on that mod.</li>
-            <li><strong>User-Friendly Interface</strong>: Shows your mods in a clean, sortable table, making it easy to spot which ones need updating.</li>
+            
+            <li><strong>Embedded Mod Browser</strong>: Browse the official Vintage Story Mod Database natively inside the application, allowing you to discover new mods without switching to an external browser.</li>
+            
+            <li><strong>Mod Search Filter</strong>: Filter your active mod list by name using a responsive search bar built into the application's title bar.</li>
+            
+            <li><strong>User-Friendly Interface</strong>: Shows your mods in a clean, sortable table, making it easy to spot which ones need updating.
+                <ul>
+                    <li><strong>Dynamic Status Pills</strong>: Features status badges above the table showing counters for total mods, disabled updates, version mismatches, and pending updates.</li>
+                    <li>Provides buttons to open any mod's official Vintage Story Mod Database page instantly.</li>
+                </ul>
+            </li>
+            
+            <li><strong>Detailed Update Summary</strong>: Displays a clear summary of all updated mods along with their version changes.
+                <ul>
+                    <li>Includes a copy to clipboard option formatted perfectly in Discord markdown, making it effortless to post patch notes for your community.</li>
+                </ul>
+            </li>
+            
+            <li><strong>Advanced Modlist Tools</strong>: Access a collection of utility tools designed to manage your modlist:
+                <ul>
+                    <li><strong>Duplicate Cleaner</strong>: Automatically scans your active folder and removes duplicate mod files.</li>
+                    <li><strong>Flexible Modlist Exporting</strong>: Copy your current modlist to the clipboard using either a standard layout or a pre-formatted Discord markdown style.</li>
+                    <li><strong>Modlist Purge &amp; Reinstall</strong>: Wipe and reinstall your entire active modlist to potentially fix corruption issues.</li>
+                </ul>
+            </li>
+            
+            <li><strong>In-App Changelog Viewer</strong>: Read the application's full development and update history directly inside the client.</li>
+            
+            <li><strong>Built-In Information Panel</strong>: Access a context guide that clarifies potentially confusing behaviors.</li>
+            
+            <li><strong>Deep Customization</strong>: Tailor VSSuite to your liking with a application settings menu.
+                <ul>
+                    <li><strong>General Preferences</strong>: Set your preferred target game version for startup loading and toggle automatic update checks on application launch.</li>
+                    <li><strong>Safe Mode Filter</strong>: Restricts VSSuite to stable mod releases only, automatically filtering out development and release candidate builds (e.g., <code>3.2.1-dev.1</code> or <code>1.2.3-rc.3</code>).</li>
+                    <li><strong>Interface Customization</strong>: Toggle specific table columns on or off (such as Ignore, Mod Page, File Name, or Game Version) to hide unnecessary data fields and declutter your view.</li>
+                </ul>
+            </li>
         </ul>
       </div>
     </div>
 
-    <div style="margin-top: 20px; border: 1px solid #3d444d; border-radius: 5px; background: #0d1117; overflow: hidden;">
-      <div style="background: #151b23; padding: 5px; border-bottom: 1px solid #3d444d; font-weight: 600; font-size: 22px; text-align: center;">
+    <div style="margin-top: 20px; border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
         Virus Scans
       </div>
       <div style="padding: 20px 60px; margin: auto;">
         <ul>
             <li>
-                <a style="color: #608cbe" href="https://www.virustotal.com/gui/file/38b948ac3187e191f8790cd6f4454b59f9f507b6aea377ef3363795b15921444/detection">VS-Mod-Update-Tool_v0.6.3.zip</a>
+                <a style="color: #6bbe60" href="https://www.virustotal.com/gui/file/b5da1dcb9935f141ae86e9612ee6163603c02c2f8743b0247bdadca0ebcf5c19/details">VSSuite_v0.7.0.zip</a>
                 <ul>
-                    <li><strong>SHA-256:</strong> 38b948ac3187e191f8790cd6f4454b59f9f507b6aea377ef3363795b15921444</li>
+                    <li><strong>SHA-256:</strong> b5da1dcb9935f141ae86e9612ee6163603c02c2f8743b0247bdadca0ebcf5c19</li>
                 </ul>
             </li>
 
             <li>
-                <a style="color: #608cbe" href="https://www.virustotal.com/gui/file/a99a54d89cec900305d9bbd4b68aa10720b67e8559f75dc8e6c40a433d054e23/detection">VS-Mod-Update-Tool.dll</a>
+                <a style="color: #6bbe60" href="https://www.virustotal.com/gui/file/89efde6a57946ae785ae0f5f1cd8eb31f9c8a0592a86bb53dbf3bcc3ad5d484f/details">VSSuite.dll</a>
                 <ul>
-                    <li><strong>SHA-256:</strong> a99a54d89cec900305d9bbd4b68aa10720b67e8559f75dc8e6c40a433d054e23</li>
+                    <li><strong>SHA-256:</strong> 89efde6a57946ae785ae0f5f1cd8eb31f9c8a0592a86bb53dbf3bcc3ad5d484f</li>
                 </ul>
             </li>
         </ul>
       </div>
     </div>
 
-    <div style="margin-top: 20px; border: 1px solid #3d444d; border-radius: 5px; background: #0d1117; overflow: hidden;">
-      <div style="background: #151b23; padding: 5px; border-bottom: 1px solid #3d444d; font-weight: 600; font-size: 22px; text-align: center;">
+    <div style="margin-top: 20px; border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
         More Information
       </div>
       <div style="padding: 20px 60px; margin: auto; text-align: center;">
-        <h1 style="color: #6bbe60">
-            For more information view the <a style="color: #6bbe60" href="https://github.com/AriesLR/VS-Mod-Update-Tool">Github</a>
+        <h1 style="color: #7A8A6B">
+            For more information view the <a style="color: #6bbe60" href="https://github.com/AriesLR/VSSuite">Github</a>
         </h1>
       </div>
     </div>
 
-    <div style="margin-top: 20px; border: 1px solid #3d444d; border-radius: 5px; background: #0d1117; overflow: hidden;">
-      <div style="background: #151b23; padding: 5px; border-bottom: 1px solid #3d444d; font-weight: 600; font-size: 22px; text-align: center;">
-        Support
+    <div style="margin-top: 20px; border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
+        Support the Project
       </div>
       <div style="padding: 20px 60px; margin: auto; text-align: center;">
-        <a href="https://buymeacoffee.com/arieslr" target="_blank"><img src="https://buymeacoffee.com/assets/img/custom_images/yellow_img.png" alt="Buy Me A Coffee" style="height: 41px; width: 174px" ></a>
+        <a href="https://www.buymeacoffee.com/arieslr" target="_blank" style="text-decoration: none; display: block; margin-bottom: 12px;"><img src="https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me A Coffee" style="height: 41px;"></a>
+
+        <a href="https://www.patreon.com/c/arieslr/membership" target="_blank" style="text-decoration: none; display: block;"><img src="https://img.shields.io/badge/Patreon-F96854?style=for-the-badge&logo=patreon&logoColor=white" alt="Patreon" style="height: 41px;"></a>
+      </div>
+    </div>
+
+    <div style="margin-top: 20px; border: 1px solid #747F6199; border-radius: 5px; background: #131510; overflow: hidden;">
+      <div style="background: #212419; padding: 5px; border-bottom: 1px solid #747F6199; font-weight: 600; font-size: 22px; text-align: center; color: #BEC7B6;">
+        Join the Community
+      </div>
+      <div style="padding: 20px 60px; margin: auto; text-align: center;">
+          <a href="https://discord.gg/CwX7q6yT9g" target="_blank" style="text-decoration: none; display: block; margin-bottom: 12px;"><img src="https://img.shields.io/badge/Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord" style="height: 41px;"></a>
       </div>
     </div>
 

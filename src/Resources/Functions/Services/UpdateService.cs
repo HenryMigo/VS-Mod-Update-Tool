@@ -2,52 +2,52 @@
 using System.Diagnostics;
 using System.Net.Http;
 
-namespace VSModUpdater.Resources.Functions.Services
+namespace VSSuite.Resources.Functions.Services
 {
     public class UpdateService
     {
-        private static readonly string currentVersionVSModUpdater = FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion;
+        // Fallback to "0.0.0" if FileVersion returns null so currentVersionVSModUpdater itself is never null
+        private static readonly string currentVersionVSModUpdater =
+            FileVersionInfo.GetVersionInfo(System.Reflection.Assembly.GetExecutingAssembly().Location).FileVersion ?? "0.0.0";
 
         public static async Task CheckForUpdatesAsync(string jsonUrl)
         {
             try
             {
-                using (HttpClient client = new HttpClient())
+                using var client = new HttpClient();
+                string response = await client.GetStringAsync(jsonUrl);
+                var updateInfo = JsonConvert.DeserializeObject<UpdateInfo>(response);
+
+                if (updateInfo?.LatestVersionVSModUpdater == null || updateInfo.DownloadUrlVSModUpdater == null)
                 {
-                    string response = await client.GetStringAsync(jsonUrl);
-                    var updateInfo = JsonConvert.DeserializeObject<UpdateInfo>(response);
+                    await MessageService.ShowError("Failed to retrieve valid update information.");
+                    return;
+                }
 
-                    if (updateInfo == null)
+                string latestVersion = updateInfo.LatestVersionVSModUpdater;
+                string currentVersion = currentVersionVSModUpdater;
+
+                int versionComparison = CompareVersions(currentVersion, latestVersion);
+
+                if (versionComparison < 0)
+                {
+                    // New version available
+                    bool userConfirmed = await MessageService.ShowYesNo("Check For Updates", $"A new version is available: {latestVersion}\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}\n\nWould you like to download the new version?");
+
+                    if (userConfirmed)
                     {
-                        await MessageService.ShowError("Failed to retrieve update information.");
-                        return;
+                        UrlService.OpenUrlAsync(updateInfo.DownloadUrlVSModUpdater);
                     }
-
-                    var latestVersion = updateInfo.latestVersionVSModUpdater;
-                    var currentVersion = currentVersionVSModUpdater;
-
-                    int versionComparison = CompareVersions(currentVersion, latestVersion);
-
-                    if (versionComparison < 0)
-                    {
-                        // New version available
-                        bool userConfirmed = await MessageService.ShowYesNo("Check For Updates", $"A new version is available: {latestVersion}\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}\n\nWould you like to download the new version?");
-
-                        if (userConfirmed)
-                        {
-                            UrlService.OpenUrlAsync(updateInfo.downloadUrlVSModUpdater);
-                        }
-                    }
-                    else if (versionComparison > 0)
-                    {
-                        // Easter egg (this shouldn't happen, but I'm dumb)
-                        await MessageService.ShowInfo("Check For Updates", $"You're a wizard, harry!\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}\n\nTell AriesLR he's a goofball and forgot to update the version number.");
-                    }
-                    else
-                    {
-                        // Up to date
-                        await MessageService.ShowInfo("Check For Updates", $"You are already using the latest version.\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}");
-                    }
+                }
+                else if (versionComparison > 0)
+                {
+                    // Easter egg
+                    await MessageService.ShowInfo("Check For Updates", $"You're a wizard, harry!\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}\n\nTell AriesLR he's a goofball and forgot to update the version number.");
+                }
+                else
+                {
+                    // Up to date
+                    await MessageService.ShowInfo("Check For Updates", $"You are already using the latest version.\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}");
                 }
             }
             catch (Exception ex)
@@ -60,29 +60,28 @@ namespace VSModUpdater.Resources.Functions.Services
         {
             try
             {
-                using (HttpClient client = new HttpClient())
+                using var client = new HttpClient();
+                string response = await client.GetStringAsync(jsonUrl);
+                var updateInfo = JsonConvert.DeserializeObject<UpdateInfo>(response);
+
+                if (updateInfo?.LatestVersionVSModUpdater == null || updateInfo.DownloadUrlVSModUpdater == null)
                 {
-                    string response = await client.GetStringAsync(jsonUrl);
-                    var updateInfo = JsonConvert.DeserializeObject<UpdateInfo>(response);
+                    await MessageService.ShowError("Failed to retrieve valid update information.");
+                    return;
+                }
 
-                    if (updateInfo == null)
+                string latestVersion = updateInfo.LatestVersionVSModUpdater;
+                string currentVersion = currentVersionVSModUpdater;
+
+                int versionComparison = CompareVersions(currentVersion, latestVersion);
+
+                if (versionComparison < 0)
+                {
+                    bool userConfirmed = await MessageService.ShowYesNo("Check For Updates", $"A new version is available: {latestVersion}\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}\n\nWould you like to download the new version?");
+
+                    if (userConfirmed)
                     {
-                        return;
-                    }
-
-                    var latestVersion = updateInfo.latestVersionVSModUpdater;
-                    var currentVersion = currentVersionVSModUpdater;
-
-                    int versionComparison = CompareVersions(currentVersion, latestVersion);
-
-                    if (versionComparison < 0)
-                    {
-                        bool userConfirmed = await MessageService.ShowYesNo("Check For Updates", $"A new version is available: {latestVersion}\n\nLatest Version: {latestVersion}\nYour Version: {currentVersion}\n\nWould you like to download the new version?");
-
-                        if (userConfirmed)
-                        {
-                            UrlService.OpenUrlAsync(updateInfo.downloadUrlVSModUpdater);
-                        }
+                        UrlService.OpenUrlAsync(updateInfo.DownloadUrlVSModUpdater);
                     }
                 }
             }
@@ -113,8 +112,8 @@ namespace VSModUpdater.Resources.Functions.Services
 
         public class UpdateInfo
         {
-            public string latestVersionVSModUpdater { get; set; }
-            public string downloadUrlVSModUpdater { get; set; }
+            public string? LatestVersionVSModUpdater { get; set; }
+            public string? DownloadUrlVSModUpdater { get; set; }
         }
     }
 }

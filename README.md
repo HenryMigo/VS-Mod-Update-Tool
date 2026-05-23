@@ -45,7 +45,7 @@ If the user selects **"Download All Mods,"** the app fetches the updated mods, r
   - This is likely already installed on your system.
 
 - [WebView2](https://developer.microsoft.com/en-us/microsoft-edge/webview2/?form=MA13LH#download)
-  - If this is missing from your system, the application will automatically prompt you to download it when opening the mod browser.
+  - If this is missing from your system, the application will automatically prompt you to download it when opening the mod browser. If you choose not to use the mod browser you can continue without WebView2.
 
 ### OS Support
 

@@ -1,4 +1,4 @@
-﻿using NuGet.Versioning; // Make sure this is included
+﻿using NuGet.Versioning;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;

@@ -8,10 +8,12 @@
 
   <br/>
 
-
   <a href="https://www.patreon.com/c/arieslr/membership"><img src="https://img.shields.io/badge/Patreon-F96854?style=flat&logo=patreon&logoColor=white" align="center"></a>
   <a href="https://www.buymeacoffee.com/arieslr"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black" align="center"></a>
 
+  <br/>
+
+  <a href="https://discord.gg/CwX7q6yT9g"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" align="center"></a>
 </div>
 
 ## Table of Contents

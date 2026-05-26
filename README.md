@@ -27,7 +27,7 @@
 - [Installation](#installation)
   - [How To Use](#how-to-use)
 - [Updating](#updating)
-- [Screenshots](#infographic)
+- [Screenshots](#screenshots)
 - [Acknowledgements](#acknowledgements)
 - [License](#license)
 
@@ -119,6 +119,34 @@ Getting started with **VSSuite** is simple, just download the [Latest Release](h
 Updating **VSSuite** is easy. Since the app is fully portable, all you need to do is download the [Latest Release](https://github.com/AriesLR/VSSuite/releases/latest) and replace your existing `VSSuite.exe` with the new one.
 
  
+## Screenshots
+<p align="center">
+  <kbd>
+    <a href="docs/img/01.png"><img src="docs/img/01.png" width="45%" alt="Main Page" /></a>
+  </kbd>
+  <kbd>
+    <a href="docs/img/02.png"><img src="docs/img/02.png" width="45%" alt="Information Flyout" /></a>
+  </kbd>
+  <br />
+  <kbd>
+    <a href="docs/img/03.png"><img src="docs/img/03.png" width="45%" alt="Modlist Tools Flyout" /></a>
+  </kbd>
+  <kbd>
+    <a href="docs/img/04.png"><img src="docs/img/04.png" width="45%" alt="Mod Browser Flyout" /></a>
+  </kbd>
+  <br />
+  <kbd>
+    <a href="docs/img/05.png"><img src="docs/img/05.png" width="45%" alt="Application Settings Flyout" /></a>
+  </kbd>
+  <kbd>
+    <a href="docs/img/06.png"><img src="docs/img/06.png" width="45%" alt="Search Filtering" /></a>
+  </kbd>
+  <kbd>
+    <a href="docs/img/Before_After.png"><img src="docs/img/Before_After.png" width="45%" alt="Search Filtering" /></a>
+  </kbd>
+</p>
+
+
 ## Acknowledgements
 - [Vintage Story Devs](https://www.vintagestory.at) - For unintentionally inspiring this whole project. If it wasn't for the game this wouldn't exist.
 
